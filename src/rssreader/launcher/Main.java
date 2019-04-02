@@ -10,9 +10,14 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/rssreader/view/dashboard.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/rssreader/layout/sidebar.fxml"));
         primaryStage.setTitle("RSS Reader");
-        primaryStage.setScene(new Scene(root, 300, 275));
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/rssreader/resources/sidebar.css").toExternalForm());
+
+        primaryStage.setScene(scene);
+//        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

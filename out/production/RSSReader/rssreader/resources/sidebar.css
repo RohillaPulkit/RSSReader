@@ -1,0 +1,28 @@
+#menu{
+    -fx-background-color: #1f252b;
+}
+
+#menuItem {
+    -fx-background-color: #1f252b;
+    -fx-background-radius: 0;
+}
+
+#menuItem:hover {
+    -fx-background-color: #2c373f;
+}
+
+#menuItem:focused {
+    -fx-background-color: #2c373f;
+}
+
+#menuPane:hover{
+    -fx-background-color: #22ddb1;
+}
+
+.btns{
+    -fx-background-color: transparent;
+}
+
+#feedList{
+    -fx-background-color: transparent;
+}
