@@ -1,0 +1,4 @@
+rssreader/controller/SidebarController.class
+rssreader/launcher/Main.class
+rssreader/controller/PostsController.class
+rssreader/view/FeedListViewCell.class

@@ -31,7 +31,7 @@ public class FeedListViewCell extends ListCell<String> {
         {
             if (mLLoader == null) {
 
-                mLLoader = new FXMLLoader(getClass().getResource("/rssreader/layout/feedListCell.fxml"));
+                mLLoader = new FXMLLoader(getClass().getResource("/layout/feedListCell.fxml"));
                 mLLoader.setController(this);
 
                 try {

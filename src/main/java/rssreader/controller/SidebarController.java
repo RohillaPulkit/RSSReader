@@ -61,7 +61,7 @@ public class SidebarController implements Initializable {
         feedListView.setItems(feedList);
         feedListView.setCellFactory(feedListView -> new FeedListViewCell());
 
-        feedListView.getStylesheets().add(getClass().getResource("/rssreader/resources/feedList.css").toExternalForm());
+        feedListView.getStylesheets().add(getClass().getResource("/css/feedList.css").toExternalForm());
     }
 
     @FXML
@@ -79,7 +79,7 @@ public class SidebarController implements Initializable {
             mode = "Favorites";
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/rssreader/layout/posts.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
         Parent root = fxmlLoader.load();
         PostsController controller = fxmlLoader.getController();
 
@@ -107,7 +107,7 @@ public class SidebarController implements Initializable {
 
         try{
 
-            Parent newPosts = FXMLLoader.load(getClass().getResource("/rssreader/layout/posts.fxml"));
+            Parent newPosts = FXMLLoader.load(getClass().getResource("/layout/posts.fxml"));
             masterPane.setCenter(newPosts);
         }
         catch (Exception e){
@@ -120,7 +120,7 @@ public class SidebarController implements Initializable {
 
         try{
 
-            Parent newPosts = FXMLLoader.load(getClass().getResource("/rssreader/layout/posts.fxml"));
+            Parent newPosts = FXMLLoader.load(getClass().getResource("/layout/posts.fxml"));
             masterPane.setCenter(newPosts);
         }
         catch (Exception e){

@@ -10,11 +10,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/rssreader/layout/sidebar.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/layout/sidebar.fxml"));
         primaryStage.setTitle("RSS Reader");
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/rssreader/resources/sidebar.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/sidebar.css").toExternalForm());
 
         primaryStage.setScene(scene);
 //        primaryStage.setResizable(false);
