@@ -8,7 +8,6 @@ public class PostsController {
     @FXML
     private Label titleLabel;
 
-    //MEENU CHANGES
     public void setLabel(String title){
 
         titleLabel.setText(title);
