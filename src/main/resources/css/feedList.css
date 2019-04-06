@@ -8,6 +8,7 @@
     -fx-padding: 0;
 }
 
-.list-view .list-cell:hover {
-    -fx-background-color: #2c373f;
+.list-view .list-cell:hover{
+    -fx-background-color: #22ddb1, #2c373f;
+    -fx-background-insets: 0, 0 5 0 0;
 }

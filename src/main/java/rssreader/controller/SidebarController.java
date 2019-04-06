@@ -7,11 +7,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Control;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import rssreader.view.FeedListViewCell;
 
 import java.net.URL;
@@ -23,14 +22,7 @@ public class SidebarController implements Initializable {
     private BorderPane masterPane;
 
     @FXML
-    private Pane newPostsItem;
-
-    @FXML
-    private Pane readLaterItem;
-
-    @FXML
-    private Pane favoritesItem;
-
+    private Button btnNewPosts, btnReadLater, btnFavorites;
 
     @FXML
     private ListView feedListView;
@@ -53,6 +45,8 @@ public class SidebarController implements Initializable {
         feedList.add("11");
         feedList.add("12");
 
+//        newPostsItem.setFocusTraversable(true);
+
     }
 
     @Override
@@ -65,71 +59,54 @@ public class SidebarController implements Initializable {
     }
 
     @FXML
-    public void onMenuItemClick(MouseEvent event) throws Exception{
+    public void onMenuButtonClick(MouseEvent event) throws Exception{
 
         String mode = "";
 
-        if (event.getSource() == newPostsItem){
+        if (event.getSource() == btnNewPosts){
+
             mode = "NewPosts";
+
         }
-        else if (event.getSource() == readLaterItem){
+        else if (event.getSource() == btnReadLater){
+
             mode = "ReadLater";
+
         }
-        else if (event.getSource() == favoritesItem){
+        else if (event.getSource() == btnFavorites){
+
             mode = "Favorites";
         }
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
-        Parent root = fxmlLoader.load();
-        PostsController controller = fxmlLoader.getController();
-
-        controller.setLabel(mode);
-        masterPane.setCenter(root);
-    }
-
-    @FXML
-    public void onNewPostsClick(MouseEvent event) throws Exception{
-
-        System.out.println(((Control)event.getSource()).getId());
-
         try{
 
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
+            Parent root = fxmlLoader.load();
+            PostsController controller = fxmlLoader.getController();
 
+            controller.setLabel(mode);
+            masterPane.setCenter(root);
         }
-        catch (Exception e){
-
+        catch (Exception ex){
+            System.out.println(ex);
         }
 
     }
 
     @FXML
-    private void onReadLaterClick(MouseEvent event){
+    private void onAddContentClick(MouseEvent event) throws Exception{
 
-        try{
+        try {
 
-            Parent newPosts = FXMLLoader.load(getClass().getResource("/layout/posts.fxml"));
-            masterPane.setCenter(newPosts);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
+            Parent root = fxmlLoader.load();
+
+            masterPane.setCenter(root);
         }
-        catch (Exception e){
+        catch (Exception ex){
 
-        }
-    }
-
-    @FXML
-    private void onFavoritesClick(MouseEvent event){
-
-        try{
-
-            Parent newPosts = FXMLLoader.load(getClass().getResource("/layout/posts.fxml"));
-            masterPane.setCenter(newPosts);
-        }
-        catch (Exception e){
-
+            System.out.println(ex);
         }
     }
 
-    @FXML
-    private void onAddNewClick(MouseEvent event){
-
-    }
 }
