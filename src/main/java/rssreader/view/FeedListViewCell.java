@@ -10,11 +10,9 @@ import java.io.IOException;
 
 public class FeedListViewCell extends ListCell<String> {
 
-    @FXML
-    private Label titleLabel;
+    @FXML private Label titleLabel;
 
-    @FXML
-    private FlowPane flowPane;
+    @FXML private FlowPane flowPane;
 
     private FXMLLoader mLLoader;
 

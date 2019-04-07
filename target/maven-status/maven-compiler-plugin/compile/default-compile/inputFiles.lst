@@ -2,4 +2,7 @@
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/AddContentController.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/FeedListViewCell.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/PostsController.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/ContentTileCell.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/launcher/Main.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/database/DBManager.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/model/RSSCategory.java

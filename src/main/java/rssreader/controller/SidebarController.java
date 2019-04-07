@@ -45,8 +45,6 @@ public class SidebarController implements Initializable {
         feedList.add("11");
         feedList.add("12");
 
-//        newPostsItem.setFocusTraversable(true);
-
     }
 
     @Override
@@ -100,6 +98,7 @@ public class SidebarController implements Initializable {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
             Parent root = fxmlLoader.load();
+            root.getStylesheets().add(getClass().getResource("/css/addContent.css").toExternalForm());
 
             masterPane.setCenter(root);
         }

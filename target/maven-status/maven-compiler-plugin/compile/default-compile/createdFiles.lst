@@ -1,5 +1,9 @@
+rssreader/model/RSSCategory.class
+rssreader/view/ContentTileCell.class
+rssreader/view/FeedListViewCell.class
+rssreader/database/DBManager.class
 rssreader/controller/SidebarController.class
 rssreader/controller/AddContentController.class
 rssreader/launcher/Main.class
+rssreader/view/ContentTileCell$1.class
 rssreader/controller/PostsController.class
-rssreader/view/FeedListViewCell.class
