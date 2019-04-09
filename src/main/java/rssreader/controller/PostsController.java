@@ -2,16 +2,10 @@ package rssreader.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import rssreader.model.RSSCategory;
 import rssreader.model.RSSItem;
-import rssreader.view.ContentTileCell;
 import rssreader.view.PostGridCell;
 
 import java.net.URL;
@@ -26,19 +20,14 @@ public class PostsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         ArrayList<RSSItem> itemArrayList = new ArrayList<>();
-        itemArrayList.add(new RSSItem("One", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612",new Date()));
-        itemArrayList.add(new RSSItem("Two", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Three", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Four", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Five", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Six", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Seven", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
-        itemArrayList.add(new RSSItem("Eight", "Something", "One", "https://media.gettyimages.com/photos/robin-picture-id471196487?s=612x612", new Date()));
+        for(int i = 0; i <= 10; i++){
+            itemArrayList.add(new RSSItem("One", "Something", "One", "https://stmed.net/sites/default/files/styles/320x240/public/lakes-wallpapers-27929-5997666.jpg?itok=PgxpBNEY",new Date()));
+        }
 
         int numberOfRows = Math.round((float)itemArrayList.size()*(float)(2.0/3.0));
         int itemIndex = 0;
 
-        gridPane.setGridLinesVisible(true);
+//        gridPane.setGridLinesVisible(true);
         gridPane.getRowConstraints().clear();
 
         for(int row = 0; row < numberOfRows; row++){
@@ -46,38 +35,27 @@ public class PostsController implements Initializable {
             if(row%2 != 0){
 
                 RSSItem centerItem = itemArrayList.get(itemIndex++);
-//                PostGridCell cell = new PostGridCell(centerItem);
-//                cell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                Button btn = new Button("ONE");
-                btn.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                gridPane.add(btn, 0, row, 2, 1); //node, col, row, width, height
-                RowConstraints rowConstraints = new RowConstraints();
-                rowConstraints.setMinHeight(200);
-                rowConstraints.setMaxHeight(200);
-                rowConstraints.setPrefHeight(200);
-                rowConstraints.setVgrow(Priority.ALWAYS);
-
-                gridPane.getRowConstraints().add(rowConstraints);
+                PostGridCell cell = new PostGridCell(centerItem);
+                gridPane.add(cell, 0, row, 2, 1); //node, col, row, width, height
             }
             else {
 
                 RSSItem leftItem = itemArrayList.get(itemIndex++);
                 PostGridCell leftCell = new PostGridCell(leftItem);
-
-                gridPane.add(leftCell, 0,row ); //node, col, row
+                gridPane.add(leftCell, 0, row, 1,1 ); //node, col, row
 
                 RSSItem rightItem = itemArrayList.get(itemIndex++);
                 PostGridCell rightCell = new PostGridCell(rightItem);
-
-                gridPane.add(rightCell, 1,row);
-
-                RowConstraints rowConstraints = new RowConstraints();
-                rowConstraints.setMinHeight(200);
-                rowConstraints.setMaxHeight(200);
-                rowConstraints.setPrefHeight(200);
-                rowConstraints.setVgrow(Priority.ALWAYS);
-                gridPane.getRowConstraints().add(rowConstraints);
+                gridPane.add(rightCell, 1,row, 1, 1);
             }
+
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setMinHeight(200);
+            rowConstraints.setMaxHeight(200);
+            rowConstraints.setPrefHeight(200);
+            rowConstraints.setVgrow(Priority.ALWAYS);
+
+            gridPane.getRowConstraints().add(rowConstraints);
         }
 
 

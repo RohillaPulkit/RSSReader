@@ -2,74 +2,127 @@ package rssreader.view;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.shape.Rectangle;
 import rssreader.model.RSSItem;
 
-import java.io.IOException;
+public class PostGridCell extends GridPane {
+    private Label labelTitle;
+    private Label labelDate;
+    private Label labelChannelName;
+    private ImageView imageView;
 
-public class PostGridCell extends Pane {
+    private RSSItem rssItem;
 
-   @FXML private Label title;
-   @FXML private ImageView image;
-   @FXML private Label publicationDate;
-   @FXML private Label labelChannel;
+    public PostGridCell(RSSItem rssItem){
+        labelTitle = new Label();
+        labelDate = new Label();
+        labelChannelName= new Label();
+        imageView = new ImageView();
+        this.rssItem = rssItem;
 
-   private RSSItem item;
+        setUpGrid();
+    }
+    private void setUpGrid(){
 
-   private Node root;
+        setMargin(labelTitle, new Insets(0,0,0,10));
+        setMargin(labelDate, new Insets(0,0,0,10));
+        setMargin(labelChannelName, new Insets(0,0,0,10));
 
-   public  PostGridCell(RSSItem item){
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(200);
+        setMinHeight(200);
+        setPrefHeight(200);
+        setPrefWidth(Control.USE_COMPUTED_SIZE);
+        setHgap(10);
+        setVgap(5);
 
-      FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/postGridCell.fxml"));
-      fxmlLoader.setController(this);
-      try {
+//        setOpacity(0.5);
+        setStyle("-fx-background-color: white; -fx-background-radius: 5");
 
-         root = fxmlLoader.load();
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(widthProperty());
+        clip.heightProperty().bind(heightProperty());
+        
+        clip.setArcWidth(5);
+        clip.setArcHeight(5);
 
-      } catch (IOException exception) {
+        setClip(clip);
+        
+        imageView.fitWidthProperty().bind(widthProperty().multiply(0.5));
+        imageView.fitHeightProperty().bind(heightProperty());
 
-         throw new RuntimeException(exception);
-      }
-      this.item = item;
+        add(imageView,0,0,3,1);
 
-      setUpGrid();
-   }
+        RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setVgrow(Priority.SOMETIMES);
+        rowConstraints.setValignment(VPos.TOP);
+        rowConstraints.setFillHeight(true);
+        rowConstraints.setPercentHeight(80);
 
-    public void setUpGrid(){
-//       javafx.scene.shape.Rectangle clip = new Rectangle(200, 200);
-//       clip.setArcWidth(40);
-//       clip.setArcHeight(40);
-//
-//       setClip(clip);
-       getChildren().add(root);
-//       getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setHgrow(Priority.ALWAYS);
+        columnConstraints.setFillWidth(true);
+        columnConstraints.setMinWidth(10);
+        columnConstraints.setPrefWidth(100);
+        columnConstraints.setPercentWidth(50);
 
-       title.setText(item.getTitle());
-       publicationDate.setText(item.getPublicationDate().toString());
+        getRowConstraints().add(rowConstraints);
+        getColumnConstraints().add(columnConstraints);
 
-       Task task = new Task<Void>() {
+        add(labelTitle,1,0);
 
-          @Override
-          public Void call() {
+        add(labelDate,1,1);
+        RowConstraints dateRowConstraints = new RowConstraints();
+        dateRowConstraints.setPercentHeight(10);
+        dateRowConstraints.setFillHeight(true);
+        dateRowConstraints.setVgrow(Priority.ALWAYS);
 
-             Image ItemImage = new Image(item.getItemUrl());
+        getRowConstraints().add(dateRowConstraints);
 
-             Platform.runLater(() -> {
+        add(labelChannelName,1,2);
+        RowConstraints channelRowConstraints = new RowConstraints();
+        channelRowConstraints.setPercentHeight(10);
+        channelRowConstraints.setFillHeight(true);
+        channelRowConstraints.setVgrow(Priority.ALWAYS);
 
-                image.setImage(ItemImage);
-             });
+        getRowConstraints().add(channelRowConstraints);
 
-             return null;
-          }
-       };
-       new Thread(task).start();
+        ColumnConstraints column2Constraints = new ColumnConstraints();
+        column2Constraints.setHgrow(Priority.SOMETIMES);
+        column2Constraints.setPercentWidth(50);
 
+        getColumnConstraints().add(column2Constraints);
+
+        labelTitle.setText(rssItem.getTitle());
+        labelDate.setText(rssItem.getPublicationDate().toString());
+        labelChannelName.setText(rssItem.getChannelName());
+
+        Task task = new Task<Void>() {
+
+            @Override
+            public Void call() {
+
+                Image image = new Image(rssItem.getItemUrl());
+
+                Platform.runLater(() -> {
+
+                    imageView.setImage(image);
+
+                });
+
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 }
