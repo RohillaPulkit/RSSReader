@@ -64,6 +64,7 @@ public class SidebarController implements Initializable {
         if (event.getSource() == btnNewPosts){
 
             mode = "NewPosts";
+            goToPosts();
 
         }
         else if (event.getSource() == btnReadLater){
@@ -74,19 +75,7 @@ public class SidebarController implements Initializable {
         else if (event.getSource() == btnFavorites){
 
             mode = "Favorites";
-        }
 
-        try{
-
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
-            Parent root = fxmlLoader.load();
-            PostsController controller = fxmlLoader.getController();
-
-            controller.setLabel(mode);
-            masterPane.setCenter(root);
-        }
-        catch (Exception ex){
-            System.out.println(ex);
         }
 
     }
@@ -105,6 +94,19 @@ public class SidebarController implements Initializable {
         catch (Exception ex){
 
             System.out.println(ex);
+        }
+    }
+
+    public void goToPosts(){
+        try {
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
+            Parent root = fxmlLoader.load();
+            root.getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
+            masterPane.setCenter(root);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
