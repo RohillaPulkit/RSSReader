@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import rssreader.model.RSSItem;
 import rssreader.view.FeedListViewCell;
 
 import java.net.URL;
@@ -65,7 +66,6 @@ public class SidebarController implements Initializable {
 
             mode = "NewPosts";
             goToPosts();
-
         }
         else if (event.getSource() == btnReadLater){
 
@@ -98,11 +98,34 @@ public class SidebarController implements Initializable {
     }
 
     public void goToPosts(){
+
         try {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/posts.fxml"));
             Parent root = fxmlLoader.load();
             root.getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
+
+            PostsController postsController = fxmlLoader.getController();
+            postsController.setSidebarController(this);
+
+            masterPane.setCenter(root);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void showPostsDetail(RSSItem rssItem){
+
+        System.out.println("Showing detail for "+rssItem.getTitle());
+        try {
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/postDetail.fxml"));
+            Parent root = fxmlLoader.load();
+            root.getStylesheets().add(getClass().getResource("/css/postDetail.css").toExternalForm());
+            PostDetailController detailController = fxmlLoader.getController();
+            detailController.setRssItem(rssItem);
+
             masterPane.setCenter(root);
         }
         catch (Exception ex) {
