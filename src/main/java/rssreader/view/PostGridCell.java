@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
+import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -32,6 +33,11 @@ public class PostGridCell extends GridPane {
 
         setUpGrid();
     }
+
+    public RSSItem getRssItem(){
+        return rssItem;
+    }
+
     private void setUpGrid(){
 
         setMargin(labelTitle, new Insets(0,0,0,10));
@@ -46,8 +52,8 @@ public class PostGridCell extends GridPane {
         setHgap(10);
         setVgap(5);
 
-//        setOpacity(0.5);
-        setStyle("-fx-background-color: white; -fx-background-radius: 5");
+        getStyleClass().add("cell")      ;
+        getStylesheets().add(getClass().getResource("/css/postGridCell.css").toExternalForm());
 
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(widthProperty());
@@ -57,7 +63,7 @@ public class PostGridCell extends GridPane {
         clip.setArcHeight(5);
 
         setClip(clip);
-        
+
         imageView.fitWidthProperty().bind(widthProperty().multiply(0.5));
         imageView.fitHeightProperty().bind(heightProperty());
 
