@@ -72,7 +72,7 @@ public class AddContentController implements Initializable {
     }
 
     @FXML
-    public void onDownloadButtonClick(MouseEvent event){
+    private void onDownloadButtonClick(MouseEvent event){
 
         // logging
         System.out.println("Dowloading :");

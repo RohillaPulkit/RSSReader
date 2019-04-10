@@ -14,6 +14,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+enum SceneMode{
+
+    NewPosts,
+    ReadLater,
+    Favorites,
+    Channel
+}
+
 public class PostsController implements Initializable {
 
     @FXML
@@ -22,12 +30,13 @@ public class PostsController implements Initializable {
     private ArrayList<RSSItem> itemArrayList;
 
     private SidebarController sidebarController;
-
-    public void setSidebarController(SidebarController sidebarController){
-        this.sidebarController = sidebarController;
-    }
-
+    private SceneMode sceneMode;
     private int itemIndex = 0;
+
+    public void initScene(SidebarController sidebarController, SceneMode sceneMode){
+        this.sidebarController = sidebarController;
+        this.sceneMode = sceneMode;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -79,6 +88,6 @@ public class PostsController implements Initializable {
 
     private void showPostDetail(RSSItem rssItem){
 
-        sidebarController.showPostsDetail(rssItem);
+        sidebarController.showPostsDetail(rssItem, sceneMode);
     }
 }

@@ -1,1 +1,2 @@
-rssreader\controller\PostDetailController.class
+rssreader/model/RSSChannel.class
+rssreader/view/ChannelListViewCell.class

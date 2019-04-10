@@ -5,22 +5,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.FlowPane;
+import rssreader.model.RSSChannel;
 
 import java.io.IOException;
 
-public class FeedListViewCell extends ListCell<String> {
+public class ChannelListViewCell extends ListCell<RSSChannel> {
 
-    @FXML private Label titleLabel;
+    @FXML
+    private Label titleLabel;
 
     @FXML private FlowPane flowPane;
 
     private FXMLLoader mLLoader;
 
     @Override
-    protected void updateItem(String feedTitle, boolean empty) {
-        super.updateItem(feedTitle, empty);
+    protected void updateItem(RSSChannel rssChannel, boolean empty) {
+        super.updateItem(rssChannel, empty);
 
-        if (empty || feedTitle == null){
+        if (empty || rssChannel == null){
 
             setText(null);
             setGraphic(null);
@@ -29,7 +31,7 @@ public class FeedListViewCell extends ListCell<String> {
         {
             if (mLLoader == null) {
 
-                mLLoader = new FXMLLoader(getClass().getResource("/layout/feedListCell.fxml"));
+                mLLoader = new FXMLLoader(getClass().getResource("/layout/channelListCell.fxml"));
                 mLLoader.setController(this);
 
                 try {
@@ -41,9 +43,7 @@ public class FeedListViewCell extends ListCell<String> {
                 }
             }
 
-//            getStylesheets().add(getClass().getResource("/rssreader/resources/feedList.css").toExternalForm());
-
-            titleLabel.setText(feedTitle);
+            titleLabel.setText(rssChannel.getName());
 
             setText(null);
             setGraphic(flowPane);

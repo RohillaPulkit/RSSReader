@@ -7,16 +7,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import rssreader.database.DBManager;
+import rssreader.model.RSSCategory;
+import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
-import rssreader.view.FeedListViewCell;
+import rssreader.view.ChannelListViewCell;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class SidebarController implements Initializable {
@@ -29,80 +30,59 @@ public class SidebarController implements Initializable {
 
     @FXML private Accordion accordion;
 
-
-
-    ObservableList<String> feedList;
+    private ArrayList<RSSCategory> rssCategories;
 
     public SidebarController(){
 
-        feedList = FXCollections.observableArrayList();
-        feedList.add("1");
-        feedList.add("2");
-        feedList.add("3");
-        feedList.add("4");
-        feedList.add("5");
-        feedList.add("6");
-        feedList.add("7");
-        feedList.add("8");
-        feedList.add("9");
-        feedList.add("10");
-        feedList.add("11");
-        feedList.add("12");
-
+        rssCategories = DBManager.getCategoriesWithChannels();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-         ListView<String> feedListView = new ListView();
-//         feedListView.setItems(feedList);
-        feedListView.setMinSize(100,100);
-        feedListView.getItems().setAll(feedList);
-        feedListView.setOnMouseClicked(e -> clickList(feedListView.getSelectionModel().getSelectedItem()));
-        TitledPane t1 = new TitledPane();
-        t1.setText("Tech");
-        t1.setContent(feedListView);
-        TitledPane t2 = new TitledPane("Food", new Button());
-        TitledPane t3 = new TitledPane("News", new ListView());
-        TitledPane t4 = new TitledPane("Sports",new ListView());
-        TitledPane t5 = new TitledPane("comic", new ListView());
-        TitledPane t6 = new TitledPane("Marketing", new ListView());
-        TitledPane t7 = new TitledPane("Gaming", new ListView());
-        TitledPane t8 = new TitledPane("business",new ListView());
-        TitledPane t9 = new TitledPane("movies", new ListView());
 
+        for (RSSCategory category : rssCategories){
 
-        accordion.getPanes().addAll(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+            ObservableList<RSSChannel> channels = FXCollections.observableArrayList(category.getChannels());
 
-        //       feedListView.setItems(feedList);
-//        feedListView.setCellFactory(feedListView -> new FeedListViewCell());
-//
-//    accordion.getStylesheets().add(getClass().getResource("/css/.css").toExternalForm());
-    }
-    public void clickList(String item){
-        System.out.println(item);
+            ListView<RSSChannel> channelListView = new ListView();
+            channelListView.setMinSize(100,90);
+            channelListView.setOnMouseClicked(e -> onChannelItemClick(channelListView.getSelectionModel().getSelectedItem()));
+            channelListView.setCellFactory(listView -> new ChannelListViewCell());
+            channelListView.setItems(channels);
+            channelListView.getStylesheets().add(getClass().getResource("/css/channelList.css").toExternalForm());
+
+            TitledPane titledPane = new TitledPane();
+            titledPane.setText(category.getName());
+            titledPane.setContent(channelListView);
+            
+            accordion.getPanes().add(titledPane);
+        }
     }
 
     @FXML
     public void onMenuButtonClick(MouseEvent event) throws Exception{
 
-        String mode = "";
-
         if (event.getSource() == btnNewPosts){
 
-            mode = "NewPosts";
-            goToPosts();
+            navigateToPosts(SceneMode.NewPosts);
         }
         else if (event.getSource() == btnReadLater){
 
-            mode = "ReadLater";
+            navigateToPosts(SceneMode.ReadLater);
 
         }
         else if (event.getSource() == btnFavorites){
 
-            mode = "Favorites";
-
+            navigateToPosts(SceneMode.Favorites);
         }
 
+    }
+
+    private void onChannelItemClick(RSSChannel channel){
+
+        System.out.println("Showing detail for "+channel.getName());
+
+        navigateToPosts(SceneMode.Channel);
     }
 
     @FXML
@@ -122,7 +102,7 @@ public class SidebarController implements Initializable {
         }
     }
 
-    public void goToPosts(){
+    public void navigateToPosts(SceneMode sceneMode){
 
         try {
 
@@ -131,7 +111,7 @@ public class SidebarController implements Initializable {
             root.getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
 
             PostsController postsController = fxmlLoader.getController();
-            postsController.setSidebarController(this);
+            postsController.initScene(this, sceneMode);
 
             masterPane.setCenter(root);
         }
@@ -140,16 +120,17 @@ public class SidebarController implements Initializable {
         }
     }
 
-    public void showPostsDetail(RSSItem rssItem){
+    public void showPostsDetail(RSSItem rssItem, SceneMode sceneMode){
 
         System.out.println("Showing detail for "+rssItem.getTitle());
+
         try {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/postDetail.fxml"));
             Parent root = fxmlLoader.load();
             root.getStylesheets().add(getClass().getResource("/css/postDetail.css").toExternalForm());
             PostDetailController detailController = fxmlLoader.getController();
-            detailController.setRssItem(rssItem);
+            detailController.initScreen(this, rssItem, sceneMode);
 
             masterPane.setCenter(root);
         }
