@@ -54,7 +54,7 @@ public class SidebarController implements Initializable {
             TitledPane titledPane = new TitledPane();
             titledPane.setText(category.getName());
             titledPane.setContent(channelListView);
-            
+
             accordion.getPanes().add(titledPane);
         }
     }

@@ -1,0 +1,13 @@
+.pane{
+    -fx-background-color: #191919;
+}
+
+.btns{
+    -fx-background-color: transparent;
+}
+
+.btns:hover{
+
+    -fx-background-color: #484848;
+}
+

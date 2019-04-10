@@ -1,0 +1,14 @@
+.list-view .list-cell {
+    -fx-background-color: transparent;
+}
+.list-view .scroll-bar:vertical .increment-arrow,
+.list-view .scroll-bar:vertical .decrement-arrow,
+.list-view .scroll-bar:vertical .increment-button,
+.list-view .scroll-bar:vertical .decrement-button{
+    -fx-padding: 0;
+}
+
+.list-view .list-cell:hover{
+    -fx-background-color: #22ddb1, #2c373f;
+    -fx-background-insets: 0, 0 5 0 0;
+}
