@@ -2,8 +2,8 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.BorderPane?>
@@ -80,11 +80,10 @@
             </VBox>
          </bottom>
          <center>
-            <ListView id="feedList" fx:id="feedListView" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="10.0" top="10.0" />
-               </BorderPane.margin>
-            </ListView>
+            <Accordion fx:id="accordion" prefHeight="31.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></Accordion>
          </center>
       </BorderPane>
    </left>

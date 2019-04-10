@@ -7,8 +7,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import rssreader.model.RSSItem;
@@ -25,8 +27,9 @@ public class SidebarController implements Initializable {
     @FXML
     private Button btnNewPosts, btnReadLater, btnFavorites;
 
-    @FXML
-    private ListView feedListView;
+    @FXML private Accordion accordion;
+
+
 
     ObservableList<String> feedList;
 
@@ -50,11 +53,33 @@ public class SidebarController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+         ListView<String> feedListView = new ListView();
+//         feedListView.setItems(feedList);
+        feedListView.setMinSize(100,100);
+        feedListView.getItems().setAll(feedList);
+        feedListView.setOnMouseClicked(e -> clickList(feedListView.getSelectionModel().getSelectedItem()));
+        TitledPane t1 = new TitledPane();
+        t1.setText("Tech");
+        t1.setContent(feedListView);
+        TitledPane t2 = new TitledPane("Food", new Button());
+        TitledPane t3 = new TitledPane("News", new ListView());
+        TitledPane t4 = new TitledPane("Sports",new ListView());
+        TitledPane t5 = new TitledPane("comic", new ListView());
+        TitledPane t6 = new TitledPane("Marketing", new ListView());
+        TitledPane t7 = new TitledPane("Gaming", new ListView());
+        TitledPane t8 = new TitledPane("business",new ListView());
+        TitledPane t9 = new TitledPane("movies", new ListView());
 
-        feedListView.setItems(feedList);
-        feedListView.setCellFactory(feedListView -> new FeedListViewCell());
 
-        feedListView.getStylesheets().add(getClass().getResource("/css/feedList.css").toExternalForm());
+        accordion.getPanes().addAll(t1, t2, t3, t4, t5, t6, t7, t8, t9);
+
+        //       feedListView.setItems(feedList);
+//        feedListView.setCellFactory(feedListView -> new FeedListViewCell());
+//
+//    accordion.getStylesheets().add(getClass().getResource("/css/.css").toExternalForm());
+    }
+    public void clickList(String item){
+        System.out.println(item);
     }
 
     @FXML
