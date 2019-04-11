@@ -2,6 +2,7 @@ package rssreader.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -24,8 +25,10 @@ enum SceneMode{
 
 public class PostsController implements Initializable {
 
-    @FXML
-    private GridPane gridPane;
+    @FXML private Label labelTitle;
+    @FXML private Label labelSubtitle;
+
+    @FXML private GridPane gridPane;
 
     private ArrayList<RSSItem> itemArrayList;
 
@@ -36,6 +39,8 @@ public class PostsController implements Initializable {
     public void initScene(SidebarController sidebarController, SceneMode sceneMode){
         this.sidebarController = sidebarController;
         this.sceneMode = sceneMode;
+
+        updatePrompts();
     }
 
     @Override
@@ -72,6 +77,31 @@ public class PostsController implements Initializable {
             gridPane.getRowConstraints().add(rowConstraints);
 
         }
+    }
+
+    private void updatePrompts(){
+
+        System.out.println(sceneMode);
+
+        String title = "";
+
+        switch (sceneMode){
+            case NewPosts:
+                title = "New Posts";
+                break;
+            case ReadLater:
+                title = "Read Later";
+                break;
+            case Favorites:
+                title = "Favorites";
+                break;
+            case Channel:
+                title = "Channel Name";
+                break;
+        }
+
+        labelTitle.setText(title);
+        labelSubtitle.setText(""); //Update with the response time
     }
 
     private void addGridCell(int col, int row, int colSpan, int rowSpan){
