@@ -2,6 +2,10 @@
     -fx-background-color: #1f252b;
 }
 
+#pane{
+    -fx-background-color: #1f252b;
+}
+
 .menuButton{
     -fx-alignment: center-left;
     -fx-padding: 0 0 0 30;
