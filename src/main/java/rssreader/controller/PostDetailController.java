@@ -8,6 +8,7 @@ import javafx.scene.web.WebView;
 
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
+import rssreader.utility.DownloadManager;
 
 public class PostDetailController {
 
@@ -32,6 +33,7 @@ public class PostDetailController {
 
         this.sceneMode = sceneMode;
         setupScreen();
+
     }
 
     private void setupScreen(){

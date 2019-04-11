@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
+import rssreader.utility.DownloadManager;
 import rssreader.view.PlaceHolderView;
 import rssreader.view.PostGridCell;
 
@@ -45,6 +46,7 @@ public class PostsController implements Initializable {
         this.rssChannel = rssChannel;
 
         updatePrompts();
+
     }
 
     @Override
