@@ -7,13 +7,15 @@ public class RSSCategory {
     private int id;
     private String name;
     private String imageURL;
+    private Boolean isSelected;
     private ArrayList<RSSChannel> channels;
 
-    public RSSCategory(int id, String name, String imageURL){
+    public RSSCategory(int id, String name, String imageURL, Boolean isSelected){
 
         this.id = id;
         this.name = name;
         this.imageURL = imageURL;
+        this.isSelected = isSelected;
     }
 
     public int getId(){
@@ -26,6 +28,10 @@ public class RSSCategory {
 
     public String getImageURL(){
         return imageURL;
+    }
+
+    public Boolean getSelected() {
+        return isSelected;
     }
 
     public void addChannel(RSSChannel channel){

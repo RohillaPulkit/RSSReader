@@ -38,8 +38,9 @@ public class DBManager {
                 int id = resultSet.getInt("ID");
                 String name = resultSet.getString("Name");
                 String imageURL = resultSet.getString("ImageURL");
+                Boolean isSelected = resultSet.getInt("IsSelected") == 1 ? true : false;
 
-                RSSCategory category = new RSSCategory(id, name, imageURL);
+                RSSCategory category = new RSSCategory(id, name, imageURL, isSelected);
                 list.add(category);
             }
         }
@@ -63,7 +64,7 @@ public class DBManager {
                     "Category.ImageURL," +
                     "Channel.Name as ChannelName," +
                     "Channel.URL" +
-                    " from Category, Channel WHERE Category.ID = Channel.Category";
+                    " from Category, Channel WHERE Category.ID = Channel.Category AND Category.IsSelected = 1";
             PreparedStatement preparedStatement = DBManager.connector().prepareStatement(query);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -75,8 +76,9 @@ public class DBManager {
                 String imageURL = resultSet.getString("ImageURL");
                 String channelName = resultSet.getString("ChannelName");
                 String channelURL = resultSet.getString("URL");
+                Boolean isSelected = true; //True as we will getting channels for selected categories only
 
-                RSSCategory category = map.getOrDefault(id, new RSSCategory(id, name, imageURL));
+                RSSCategory category = map.getOrDefault(id, new RSSCategory(id, name, imageURL, isSelected));
                 RSSChannel channel = new RSSChannel(channelName, channelURL);
                 category.addChannel(channel);
 
