@@ -58,7 +58,7 @@ public class PostGridCell extends GridPane {
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(widthProperty());
         clip.heightProperty().bind(heightProperty());
-        
+
         clip.setArcWidth(5);
         clip.setArcHeight(5);
 
