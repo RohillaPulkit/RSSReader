@@ -113,22 +113,19 @@ public class PostGridCell extends GridPane {
         labelDate.setText(rssItem.getPublicationDate().toString());
         labelChannelName.setText(rssItem.getChannelName());
 
-        Task task = new Task<Void>() {
+        Task<Image> getImageTask = new Task<>() {
 
             @Override
-            public Void call() {
+            protected Image call() throws Exception {
 
-                Image image = new Image(rssItem.getItemUrl());
-
-                Platform.runLater(() -> {
-
-                    imageView.setImage(image);
-
-                });
-
-                return null;
+                Image itemImage = new Image(rssItem.getImageURL());
+                return itemImage;
             }
         };
-        new Thread(task).start();
+
+        getImageTask.setOnSucceeded(event -> {
+            imageView.setImage(getImageTask.getValue());
+        });
+        new Thread(getImageTask).start();
     }
 }

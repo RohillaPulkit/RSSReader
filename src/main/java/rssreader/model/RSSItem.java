@@ -8,18 +8,18 @@ public class RSSItem {
     private String description;
     private String channelName;
 
-    private String itemURL;
+    private String imageURL;
     private Date publicationDate;
 
     public RSSItem(String title,
                    String description,
                    String channelName,
-                   String itemURL,
+                   String imageURL,
                    Date publicationDate){
         this.title = title;
         this.description = description;
         this.channelName = channelName;
-        this.itemURL = itemURL;
+        this.imageURL = imageURL;
         this.publicationDate = publicationDate;
     }
 
@@ -32,8 +32,8 @@ public class RSSItem {
     public String getChannelName() {
         return channelName;
     }
-    public String getItemUrl(){
-        return itemURL;
+    public String getImageURL(){
+        return imageURL;
     }
     public Date getPublicationDate(){
         return publicationDate;

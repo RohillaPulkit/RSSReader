@@ -37,6 +37,7 @@ public class SidebarController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         getCategoriesWithChannels();
+        navigateToPosts(PostsController.SceneMode.NewPosts, null);
     }
 
     @FXML

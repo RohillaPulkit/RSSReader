@@ -1,7 +1,6 @@
 package rssreader.view;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,22 +63,20 @@ public class ContentTileCell extends Pane{
 
         titleLabel.setText(category.getName());
 
-        Task task = new Task<Void>() {
+        Task<Image> getImageTask = new Task<>() {
 
             @Override
-            public Void call() {
+            protected Image call() throws Exception {
 
-            Image categoryImage = new Image(category.getImageURL());
-
-            Platform.runLater(() -> {
-
-                imageView.setImage(categoryImage);
-            });
-
-            return null;
+                Image categoryImage = new Image(category.getImageURL());
+                return categoryImage;
             }
         };
-        new Thread(task).start();
+
+        getImageTask.setOnSucceeded(event -> {
+            imageView.setImage(getImageTask.getValue());
+        });
+        new Thread(getImageTask).start();
 
         updateStyle();
     }
