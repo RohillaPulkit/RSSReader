@@ -14,6 +14,10 @@
 .DS_Store
 .idea
 
+# Maven
+log/
+target/
+
 # Package Files #
 *.jar
 *.war
