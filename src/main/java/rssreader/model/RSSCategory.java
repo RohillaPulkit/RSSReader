@@ -18,6 +18,10 @@ public class RSSCategory {
         this.isSelected = isSelected;
     }
 
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
+    }
+
     public int getId(){
         return id;
     }

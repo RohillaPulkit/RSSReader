@@ -3,12 +3,10 @@ package rssreader.database;
 import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class DBManager {
 
@@ -24,14 +22,19 @@ public class DBManager {
         }
     }
 
-    public static ArrayList<RSSCategory> getCategories(){
+    public static ArrayList<RSSCategory> getCategories() throws SQLException{
 
         ArrayList<RSSCategory> list = new ArrayList<>();
 
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String query = "SELECT * from Category";
+
         try {
 
-            String query = "SELECT * from Category";
-            PreparedStatement preparedStatement = DBManager.connector().prepareStatement(query);
+            dbConnection = DBManager.connector();
+            preparedStatement = dbConnection.prepareStatement(query);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
@@ -45,27 +48,40 @@ public class DBManager {
             }
         }
         catch (Exception ex){
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
 
             return list;
         }
     }
 
-    public static ArrayList<RSSCategory> getCategoriesWithChannels(){
+    public static ArrayList<RSSCategory> getCategoriesWithChannels() throws SQLException{
 
         HashMap<Integer, RSSCategory> map = new HashMap<>();
 
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String query = "SELECT Category.ID as ID," +
+                "Category.Name as CategoryName," +
+                "Category.ImageURL," +
+                "Channel.Name as ChannelName," +
+                "Channel.URL" +
+                " from Category, Channel WHERE Category.ID = Channel.Category AND Category.IsSelected = 1";
+
         try {
 
-            String query = "SELECT Category.ID as ID," +
-                    "Category.Name as CategoryName," +
-                    "Category.ImageURL," +
-                    "Channel.Name as ChannelName," +
-                    "Channel.URL" +
-                    " from Category, Channel WHERE Category.ID = Channel.Category AND Category.IsSelected = 1";
-            PreparedStatement preparedStatement = DBManager.connector().prepareStatement(query);
+            dbConnection = DBManager.connector();
+            preparedStatement = dbConnection.prepareStatement(query);
+
             ResultSet resultSet = preparedStatement.executeQuery();
 
 
@@ -91,9 +107,61 @@ public class DBManager {
         }
         finally {
 
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             ArrayList<RSSCategory> list = new ArrayList<>(map.values());
             return list;
         }
+    }
+
+    public static void updateCategoriesSelection(ArrayList<RSSCategory> categories) throws SQLException{
+
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String updateQuery = "UPDATE Category SET IsSelected = ? WHERE ID = ?";
+
+        try {
+
+            dbConnection = DBManager.connector();
+            dbConnection.setAutoCommit(false); //Batch Update
+
+            preparedStatement = dbConnection.prepareStatement(updateQuery);
+
+            for (RSSCategory category: categories){
+
+                int id = category.getId();
+                int isSelected = category.getSelected() ? 1 : 0;
+
+                preparedStatement.setInt(1, isSelected);
+                preparedStatement.setInt(2, id);
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+            dbConnection.commit();
+        }
+        catch (SQLException sqlEx){
+            sqlEx.printStackTrace();
+            dbConnection.rollback();
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+
     }
 
 }

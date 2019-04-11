@@ -1,5 +1,6 @@
 package rssreader.controller;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,17 +20,51 @@ public class AddContentController implements Initializable {
     @FXML private TilePane tilePane;
     @FXML private Button btnDownload;
 
+    private SidebarController sidebarController;
+
     private ArrayList<RSSCategory> categories;
 
     private HashSet<ContentTileCell> selectionModel = new HashSet<>();
 
-    public AddContentController() {
-
-        categories = DBManager.getCategories();
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        getCategories();
+    }
+
+    public void initScreen(SidebarController sidebarController){
+
+        this.sidebarController = sidebarController;
+    }
+
+    private void getCategories(){
+
+        Task<ArrayList<RSSCategory>> getCategoriesTask = new Task<>() {
+
+            @Override
+            public ArrayList<RSSCategory> call() throws Exception {
+                return DBManager.getCategories();
+            }
+        };
+
+        getCategoriesTask.setOnFailed(event -> {
+            getCategoriesTask.getException().printStackTrace();
+        });
+
+        getCategoriesTask.setOnSucceeded(event ->{
+            categories = getCategoriesTask.getValue();
+            updateContentPane();
+        });
+
+        new Thread(getCategoriesTask).start();
+    }
+
+    @FXML
+    private void onDownloadButtonClick(MouseEvent event){
+
+        updateCategorySelection();
+    }
+
+    private void updateContentPane(){
 
         for (RSSCategory category : categories){
 
@@ -53,10 +88,40 @@ public class AddContentController implements Initializable {
                 updateDownloadButtonState();
             });
 
+            if(category.getSelected()){
+
+                selectionModel.add(cell);
+            }
+
             tilePane.getChildren().add(cell);
         }
 
         updateDownloadButtonState();
+    }
+
+    public void updateCategorySelection(){
+
+        Task updateCategoryTask = new Task() {
+
+            @Override
+            protected Object call() throws Exception {
+
+                DBManager.updateCategoriesSelection(categories);
+                return null;
+            }
+        };
+
+        updateCategoryTask.setOnFailed(event -> {
+            updateCategoryTask.getException().printStackTrace();
+        });
+
+        updateCategoryTask.setOnSucceeded(event ->{
+
+            sidebarController.onDownloadButtonClick();
+
+        });
+
+        new Thread(updateCategoryTask).start();
     }
 
     private void updateDownloadButtonState(){
@@ -71,12 +136,4 @@ public class AddContentController implements Initializable {
         }
     }
 
-    @FXML
-    private void onDownloadButtonClick(MouseEvent event){
-
-        // logging
-        System.out.println("Dowloading :");
-        selectionModel.forEach(n -> System.out.println(n.getCategory().getName()));
-
-    }
 }

@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 import rssreader.view.PostGridCell;
 
@@ -15,15 +16,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-enum SceneMode{
-
-    NewPosts,
-    ReadLater,
-    Favorites,
-    Channel
-}
-
 public class PostsController implements Initializable {
+
+    public enum SceneMode{
+
+        NewPosts,
+        ReadLater,
+        Favorites,
+        Channel
+    }
 
     @FXML private Label labelTitle;
     @FXML private Label labelSubtitle;
@@ -34,11 +35,14 @@ public class PostsController implements Initializable {
 
     private SidebarController sidebarController;
     private SceneMode sceneMode;
+    private RSSChannel rssChannel;
+
     private int itemIndex = 0;
 
-    public void initScene(SidebarController sidebarController, SceneMode sceneMode){
+    public void initScene(SidebarController sidebarController, SceneMode sceneMode, RSSChannel rssChannel){
         this.sidebarController = sidebarController;
         this.sceneMode = sceneMode;
+        this.rssChannel = rssChannel;
 
         updatePrompts();
     }
@@ -96,7 +100,7 @@ public class PostsController implements Initializable {
                 title = "Favorites";
                 break;
             case Channel:
-                title = "Channel Name";
+                title = rssChannel.getName();
                 break;
         }
 
@@ -118,6 +122,6 @@ public class PostsController implements Initializable {
 
     private void showPostDetail(RSSItem rssItem){
 
-        sidebarController.showPostsDetail(rssItem, sceneMode);
+        sidebarController.showPostsDetail(rssChannel, rssItem, sceneMode);
     }
 }

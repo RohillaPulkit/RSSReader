@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 
+import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 
 public class PostDetailController {
@@ -15,18 +16,21 @@ public class PostDetailController {
     @FXML private FontAwesomeIcon iconFavorite;
 
     private SidebarController sidebarController;
+    private RSSChannel rssChannel;
     private RSSItem rssItem;
-    private SceneMode sceneMode;
+
+    private PostsController.SceneMode sceneMode;
 
     private static final String emptyStar = "STAR_ALT";
     private static final String fullStar = "STAR";
 
-    public void initScreen(SidebarController sidebarController, RSSItem rssItem, SceneMode sceneMode){
+    public void initScreen(SidebarController sidebarController, RSSChannel rssChannel, RSSItem rssItem, PostsController.SceneMode sceneMode){
 
         this.sidebarController = sidebarController;
+        this.rssChannel = rssChannel;
         this.rssItem = rssItem;
-        this.sceneMode = sceneMode;
 
+        this.sceneMode = sceneMode;
         setupScreen();
     }
 
@@ -41,7 +45,7 @@ public class PostDetailController {
     @FXML
     private void onBackButtonClick(MouseEvent event){
 
-        sidebarController.navigateToPosts(sceneMode);
+        sidebarController.navigateToPosts(sceneMode, rssChannel);
     }
 
     @FXML

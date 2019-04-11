@@ -28,7 +28,6 @@ public class ContentTileCell extends Pane{
     private RSSCategory category;
 
     private Node root;
-    private Boolean isSelected = false;
 
     public ContentTileCell(RSSCategory category){
 
@@ -70,14 +69,14 @@ public class ContentTileCell extends Pane{
             @Override
             public Void call() {
 
-                Image categoryImage = new Image(category.getImageURL());
+            Image categoryImage = new Image(category.getImageURL());
 
-                Platform.runLater(() -> {
+            Platform.runLater(() -> {
 
-                    imageView.setImage(categoryImage);
-                });
+                imageView.setImage(categoryImage);
+            });
 
-                return null;
+            return null;
             }
         };
         new Thread(task).start();
@@ -87,13 +86,13 @@ public class ContentTileCell extends Pane{
 
     public void toggleSelection(){
 
-        isSelected = !isSelected;
+        category.setSelected(!category.getSelected());
         updateStyle();
     }
 
     private void updateStyle(){
 
-        if (isSelected){
+        if (category.getSelected()){
 
             flowPaneOverlay.setStyle("-fx-opacity: 0.6");
             selectionIcon.setOpacity(1);

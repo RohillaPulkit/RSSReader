@@ -3,6 +3,7 @@ package rssreader.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -32,13 +33,79 @@ public class SidebarController implements Initializable {
 
     private ArrayList<RSSCategory> rssCategories;
 
-    public SidebarController(){
-
-        rssCategories = DBManager.getCategoriesWithChannels();
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        getCategoriesWithChannels();
+    }
+
+    @FXML
+    private void onMenuButtonClick(MouseEvent event){
+
+        if (event.getSource() == btnNewPosts){
+
+            navigateToPosts(PostsController.SceneMode.NewPosts, null);
+        }
+        else if (event.getSource() == btnReadLater){
+
+            navigateToPosts(PostsController.SceneMode.ReadLater, null);
+
+        }
+        else if (event.getSource() == btnFavorites){
+
+            navigateToPosts(PostsController.SceneMode.Favorites, null);
+        }
+    }
+
+    @FXML
+    private void onAddContentClick(MouseEvent event){
+
+        try {
+
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
+            Parent root = fxmlLoader.load();
+            root.getStylesheets().add(getClass().getResource("/css/addContent.css").toExternalForm());
+            AddContentController controller = fxmlLoader.getController();
+            controller.initScreen(this);
+
+            masterPane.setCenter(root);
+        }
+        catch (Exception ex){
+
+            System.out.println(ex);
+        }
+    }
+
+    private void onChannelItemClick(RSSChannel channel){
+
+        navigateToPosts(PostsController.SceneMode.Channel, channel);
+    }
+
+    private void getCategoriesWithChannels(){
+
+        Task<ArrayList<RSSCategory>> getCategoriesTask = new Task<>() {
+
+            @Override
+            public ArrayList<RSSCategory> call() throws Exception {
+                return DBManager.getCategoriesWithChannels();
+            }
+        };
+
+        getCategoriesTask.setOnFailed(event -> {
+            getCategoriesTask.getException().printStackTrace();
+        });
+
+        getCategoriesTask.setOnSucceeded(event ->{
+            rssCategories = getCategoriesTask.getValue();
+            updateChannelsPane();
+        });
+
+        new Thread(getCategoriesTask).start();
+    }
+
+    private void updateChannelsPane(){
+
+        accordion.getPanes().clear();
 
         for (RSSCategory category : rssCategories){
 
@@ -59,50 +126,8 @@ public class SidebarController implements Initializable {
         }
     }
 
-    @FXML
-    public void onMenuButtonClick(MouseEvent event) throws Exception{
-
-        if (event.getSource() == btnNewPosts){
-
-            navigateToPosts(SceneMode.NewPosts);
-        }
-        else if (event.getSource() == btnReadLater){
-
-            navigateToPosts(SceneMode.ReadLater);
-
-        }
-        else if (event.getSource() == btnFavorites){
-
-            navigateToPosts(SceneMode.Favorites);
-        }
-
-    }
-
-    private void onChannelItemClick(RSSChannel channel){
-
-        System.out.println("Showing detail for "+channel.getName());
-
-        navigateToPosts(SceneMode.Channel);
-    }
-
-    @FXML
-    private void onAddContentClick(MouseEvent event) throws Exception{
-
-        try {
-
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
-            Parent root = fxmlLoader.load();
-            root.getStylesheets().add(getClass().getResource("/css/addContent.css").toExternalForm());
-
-            masterPane.setCenter(root);
-        }
-        catch (Exception ex){
-
-            System.out.println(ex);
-        }
-    }
-
-    public void navigateToPosts(SceneMode sceneMode){
+    //Public Methods
+    public void navigateToPosts(PostsController.SceneMode sceneMode, RSSChannel rssChannel){
 
         try {
 
@@ -111,7 +136,7 @@ public class SidebarController implements Initializable {
             root.getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
 
             PostsController postsController = fxmlLoader.getController();
-            postsController.initScene(this, sceneMode);
+            postsController.initScene(this, sceneMode, rssChannel);
 
             masterPane.setCenter(root);
         }
@@ -120,7 +145,7 @@ public class SidebarController implements Initializable {
         }
     }
 
-    public void showPostsDetail(RSSItem rssItem, SceneMode sceneMode){
+    public void showPostsDetail(RSSChannel rssChannel, RSSItem rssItem, PostsController.SceneMode sceneMode){
 
         System.out.println("Showing detail for "+rssItem.getTitle());
 
@@ -130,13 +155,19 @@ public class SidebarController implements Initializable {
             Parent root = fxmlLoader.load();
             root.getStylesheets().add(getClass().getResource("/css/postDetail.css").toExternalForm());
             PostDetailController detailController = fxmlLoader.getController();
-            detailController.initScreen(this, rssItem, sceneMode);
+            detailController.initScreen(this, rssChannel, rssItem, sceneMode);
 
             masterPane.setCenter(root);
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void onDownloadButtonClick(){
+
+        getCategoriesWithChannels();
+        navigateToPosts(PostsController.SceneMode.NewPosts, null);
     }
 
 }
