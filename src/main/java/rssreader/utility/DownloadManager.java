@@ -1,32 +1,37 @@
 package rssreader.utility;
 
 
-import java.net.URL;
-import java.io.InputStreamReader;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
+import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 
-import java.net.URL;
+import java.util.ArrayList;
 
-    public class DownloadManager {
+public class DownloadManager {
 
-        public void startDownload(RSSChannel rssChannel){
+    public static boolean isDownloading = false;
 
-            System.out.println("Downloading...");
-            try {
-                URL feedUrl = new URL(rssChannel.getUrl());
-                SyndFeedInput input = new SyndFeedInput();
-                SyndFeed feed = input.build(new XmlReader(feedUrl));
+    public static void startSerialDownload(ArrayList<RSSCategory> rssCategories){
 
-                System.out.println(feed);
-            }
-            catch (Exception ex) {
-                ex.printStackTrace();
-                System.out.println("ERROR: "+ex.getMessage());
+        DownloadManager.isDownloading = true;
+
+        for (RSSCategory category : rssCategories){
+
+            for (RSSChannel channel: category.getChannels()){
+
+                Thread downloadThread = new Thread(new RSSChannelDownloader(channel));
+
+                try{
+                    downloadThread.start();
+                    downloadThread.join();
+                }
+                catch (InterruptedException ex){
+                    ex.printStackTrace();
+                }
             }
         }
+
+        DownloadManager.isDownloading = false;
     }
-//initWithChannel fn
+
+}
 

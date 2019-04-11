@@ -14,7 +14,7 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="pane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rssreader.controller.PostsController">
    <children>
-      <BorderPane fx:id="masterPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <BorderPane fx:id="masterPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="pane" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <top>
             <FlowPane alignment="CENTER" BorderPane.alignment="CENTER">
                <children>

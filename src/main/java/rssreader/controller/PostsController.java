@@ -1,22 +1,21 @@
 package rssreader.controller;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import rssreader.database.DBManager;
+import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 import rssreader.utility.DownloadManager;
 import rssreader.view.PlaceHolderView;
 import rssreader.view.PostGridCell;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.ResourceBundle;
 
-public class PostsController implements Initializable {
+public class PostsController{
 
     public enum SceneMode{
 
@@ -46,25 +45,61 @@ public class PostsController implements Initializable {
         this.rssChannel = rssChannel;
 
         updatePrompts();
-
+        getCategoriesWithChannels();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    private void getCategoriesWithChannels(){
 
-        itemArrayList = new ArrayList<>();
-//        for (int i = 0; i <= 10; i++) {
-//            itemArrayList.add(new RSSItem(String.valueOf(i), "Something", "One", "https://stmed.net/sites/default/files/styles/320x240/public/lakes-wallpapers-27929-5997666.jpg?itok=PgxpBNEY", new Date()));
-//        }
+        Task<ArrayList<RSSCategory>> getCategoriesTask = new Task<>() {
 
-        if (itemArrayList.size() == 0){
+            @Override
+            public ArrayList<RSSCategory> call() throws Exception {
+                return DBManager.getCategoriesWithChannels();
+            }
+        };
 
-            PlaceHolderView placeHolderView = new PlaceHolderView("Start by adding content");
+        getCategoriesTask.setOnFailed(event -> {
+            getCategoriesTask.getException().printStackTrace();
+        });
+
+        getCategoriesTask.setOnSucceeded(event ->{
+
+            downloadCategoryChannels(getCategoriesTask.getValue());
+        });
+
+        new Thread(getCategoriesTask).start();
+    }
+
+    private void downloadCategoryChannels(ArrayList<RSSCategory> rssCategories){
+
+        Task startDownloadTask = new Task(){
+
+            @Override
+            protected Object call() throws Exception {
+
+                DownloadManager.startSerialDownload(rssCategories);
+
+                return null;
+            }
+        };
+
+        startDownloadTask.setOnRunning(workerStateEvent -> {
+            updatePlaceHolder();
+        });
+        startDownloadTask.setOnSucceeded(event -> {
+
+            System.out.println("All Channels Downloaded");
+        });
+
+        new Thread(startDownloadTask).start();
+    }
+
+    private void updatePlaceHolder(){
+
+        if(DownloadManager.isDownloading){
+
+            PlaceHolderView placeHolderView = new PlaceHolderView("Downloading Feeds...");
             masterPane.setCenter(placeHolderView);
-        }
-        else
-        {
-            updateGrid();
         }
     }
 
@@ -93,7 +128,7 @@ public class PostsController implements Initializable {
         labelSubtitle.setText(""); //Update with the response time
     }
 
-    private void updateGrid(){
+    private void updateGrid(){ //Take This To PostView File
 
         int numberOfRows = Math.round((float) itemArrayList.size() * (float) (2.0 / 3.0));
 
