@@ -45,6 +45,7 @@ public class PostsController{
     private SceneMode sceneMode;
     private RSSChannel rssChannel;
     private RSSItem selectedItem;
+    private long downloadStartTime;
 
     public void initScene(SidebarController sidebarController, SceneMode sceneMode, RSSChannel rssChannel){
 
@@ -118,12 +119,14 @@ public class PostsController{
 
     private void downloadCategoryChannels(ArrayList<RSSCategory> rssCategories){
 
+        downloadStartTime = System.currentTimeMillis();
+
         Task startDownloadTask = new Task(){
 
             @Override
             protected Object call() throws Exception {
 
-                DownloadManager.startSerialDownload(rssCategories);
+                DownloadManager.startParallelDownload(rssCategories);
                 return null;
             }
         };
@@ -133,6 +136,9 @@ public class PostsController{
         });
 
         startDownloadTask.setOnSucceeded(event -> {
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("Time Taken :"+ (endTime - downloadStartTime) + "ms");
             getItems();
         });
 

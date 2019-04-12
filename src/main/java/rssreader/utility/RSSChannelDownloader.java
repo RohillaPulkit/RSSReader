@@ -38,6 +38,7 @@ public class RSSChannelDownloader implements Runnable{
                 String channelName = rssChannel.getName();
                 String title = entry.getTitle();
                 String description = entry.getDescription().getValue();
+                // Add/find  date and image url
 
                 rssItems.add(new RSSItem(category, channelName, title, description, "", ""));
             }
@@ -65,8 +66,8 @@ public class RSSChannelDownloader implements Runnable{
             System.out.println("Download Finished For "+rssChannel.getName());
         }
         catch (Exception ex) {
-            ex.printStackTrace();
-            System.out.println("ERROR: "+ex.getMessage());
+//            ex.printStackTrace();
+            System.out.println("ERROR: "+ex.getMessage() + "For Channel "+rssChannel.getName());
         }
     }
 }

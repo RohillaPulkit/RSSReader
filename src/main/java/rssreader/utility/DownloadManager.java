@@ -5,6 +5,8 @@ import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DownloadManager {
 
@@ -50,6 +52,30 @@ public class DownloadManager {
 
         DownloadManager.isDownloading = false;
     }
+
+   public static void startParallelDownload(ArrayList<RSSCategory> rssCategories){
+
+        DownloadManager.isDownloading = true;
+
+        ExecutorService executorDownload = Executors.newFixedThreadPool(20);
+
+       for (RSSCategory category : rssCategories){
+           for (RSSChannel channel: category.getChannels()){
+               executorDownload.execute(new RSSChannelDownloader(channel));
+           }
+       }
+       try{
+           executorDownload.shutdown();
+           while (!executorDownload.isTerminated()) {
+               Thread.sleep(100);
+           }
+       }catch (InterruptedException ex){
+           ex.printStackTrace();
+       }
+
+       DownloadManager.isDownloading = false;
+   }
+
 
 }
 
