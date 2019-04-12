@@ -1,66 +1,58 @@
 package rssreader.view;
 
-
-import javafx.concurrent.Task;
-import javafx.geometry.Insets;
-import javafx.geometry.VPos;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.shape.Rectangle;
-import rssreader.controller.SidebarController;
+import javafx.scene.paint.Color;
+import rssreader.controller.PostsController;
 import rssreader.model.RSSItem;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class PostGridView extends ScrollPane {
+
     private GridPane postGridPane;
-    private SidebarController GridSidebarController;
+    private PostsController postsController;
+
     private ArrayList<RSSItem> rssItemArrayList;
-    private String rssItemTitle;
-    private String rssItemDescription;
-    private String rssItemChannelName;
-
-    private String rssItemImageURL;
-    private Date rssItemPublicationDate;
     private int index = 0;
-    public PostGridView(SidebarController GridSidebarController, ArrayList<RSSItem> rssItemArrayList){
-        postGridPane = new GridPane();
-        this.GridSidebarController = GridSidebarController;
+
+    public PostGridView(PostsController postsController, ArrayList<RSSItem> rssItemArrayList){
+
+        this.postsController = postsController;
         this.rssItemArrayList = rssItemArrayList;
-        setUpGrid();
-        updateGridView(rssItemArrayList);
 
+        postGridPane = new GridPane();
+
+        setupView();
+        updateGridView();
     }
-    public void setUpGrid(){
-        setMaxWidth(Double.MAX_VALUE);
-        setMaxHeight(200);
-        setMinHeight(200);
-        setPrefHeight(200);
-        setPrefWidth(Control.USE_COMPUTED_SIZE);
+
+    public void setupView(){
+
+        getStylesheets().add(getClass().getResource("/css/posts.css").toExternalForm());
+        getStyleClass().add("pane");
+
+        setHbarPolicy(ScrollBarPolicy.NEVER);
+        setVbarPolicy(ScrollBarPolicy.NEVER);
+        setFitToWidth(true);
+        setFitToHeight(false);
+
+        setMinSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
+        setPrefSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        postGridPane.getStyleClass().add("pane");
         postGridPane.setHgap(10);
-        postGridPane.setVgap(5);
-        getStyleClass().add("cell")      ;
-        getStylesheets().add(getClass().getResource("/css/postGridCell.css").toExternalForm());
-        Rectangle clip = new Rectangle();
-        clip.widthProperty().bind(widthProperty());
-        clip.heightProperty().bind(heightProperty());
-
-        clip.setArcWidth(5);
-        clip.setArcHeight(5);
-
-        setClip(clip);
-        RowConstraints rowConstraints = new RowConstraints();
-        rowConstraints.setVgrow(Priority.SOMETIMES);
-        rowConstraints.setValignment(VPos.TOP);
-        rowConstraints.setFillHeight(true);
-        rowConstraints.setPercentHeight(80);
+        postGridPane.setVgap(10);
+        postGridPane.setMinSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
+        postGridPane.setPrefSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
+        postGridPane.setMaxSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setHgrow(Priority.ALWAYS);
@@ -69,34 +61,21 @@ public class PostGridView extends ScrollPane {
         columnConstraints.setPrefWidth(100);
         columnConstraints.setPercentWidth(50);
 
-        postGridPane.getRowConstraints().add(rowConstraints);
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints.setHgrow(Priority.ALWAYS);
+        columnConstraints.setFillWidth(true);
+        columnConstraints.setMinWidth(10);
+        columnConstraints.setPrefWidth(100);
+        columnConstraints.setPercentWidth(50);
+
         postGridPane.getColumnConstraints().add(columnConstraints);
 
-
-        RowConstraints dateRowConstraints = new RowConstraints();
-        dateRowConstraints.setPercentHeight(10);
-        dateRowConstraints.setFillHeight(true);
-        dateRowConstraints.setVgrow(Priority.ALWAYS);
-
-        postGridPane.getRowConstraints().add(dateRowConstraints);
-
-        RowConstraints channelRowConstraints = new RowConstraints();
-        channelRowConstraints.setPercentHeight(10);
-        channelRowConstraints.setFillHeight(true);
-        channelRowConstraints.setVgrow(Priority.ALWAYS);
-
-        postGridPane.getRowConstraints().add(channelRowConstraints);
-
-        ColumnConstraints column2Constraints = new ColumnConstraints();
-        column2Constraints.setHgrow(Priority.SOMETIMES);
-        column2Constraints.setPercentWidth(50);
-
-        postGridPane.getColumnConstraints().add(column2Constraints);
+        setContent(postGridPane);
     }
-    public void updateGridView(ArrayList<RSSItem> rssItemArrayList){
-        int numberOfRows = Math.round((float) rssItemArrayList.size() * (float) (2.0 / 3.0));
 
-        postGridPane.getRowConstraints().clear();
+    public void updateGridView(){
+
+        int numberOfRows = Math.round((float) rssItemArrayList.size() * (float) (2.0 / 3.0));
 
         for (int gridRow = 0;  gridRow< numberOfRows; gridRow++) {
 
@@ -118,9 +97,9 @@ public class PostGridView extends ScrollPane {
             rowConstraints.setVgrow(Priority.ALWAYS);
 
             postGridPane.getRowConstraints().add(rowConstraints);
-
         }
     }
+
     private void addGridCell(int col, int row, int colSpan, int rowSpan){
 
         RSSItem centerItem = rssItemArrayList.get(index++);
@@ -129,15 +108,9 @@ public class PostGridView extends ScrollPane {
         cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
 
             PostGridCell tappedCell = (PostGridCell) event.getSource();
-            //gridShowPostDetail(tappedCell.getRssItem());
+            postsController.showPostDetail(tappedCell.getRssItem());
         });
     }
-
-//    private void gridShowPostDetail(RSSItem rssItem){
-//
-//        GridSidebarController.showPostsDetail(rssItem.getChannelName(), rssItem);
-//    }
-
 
 }
 

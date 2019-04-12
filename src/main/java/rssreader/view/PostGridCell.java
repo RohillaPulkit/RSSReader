@@ -13,6 +13,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import rssreader.model.RSSItem;
 
@@ -29,6 +30,9 @@ public class PostGridCell extends GridPane {
         labelDate = new Label();
         labelChannelName= new Label();
         imageView = new ImageView();
+
+        labelTitle.setWrapText(true);
+
         this.rssItem = rssItem;
 
         setUpGrid();

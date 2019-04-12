@@ -1,17 +1,19 @@
 package rssreader.controller;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.web.WebView;
 import rssreader.database.DBManager;
 import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 import rssreader.utility.DownloadManager;
 import rssreader.view.PlaceHolderView;
-import rssreader.view.PostGridCell;
+import rssreader.view.PostGridView;
 
 import java.util.ArrayList;
 
@@ -29,23 +31,46 @@ public class PostsController{
     @FXML private Label labelSubtitle;
 
     @FXML private BorderPane masterPane;
-    @FXML private GridPane gridPane;
+    @FXML private AnchorPane detailPane;
 
-    private ArrayList<RSSItem> itemArrayList;
+    //DetailPane Properties
+    @FXML private Label labelDetailTitle;
+    @FXML private WebView webViewContent;
+    @FXML private FontAwesomeIcon iconFavorite;
+
+    private static final String emptyStar = "STAR_ALT";
+    private static final String fullStar = "STAR";
 
     private SidebarController sidebarController;
     private SceneMode sceneMode;
     private RSSChannel rssChannel;
-
-    private int itemIndex = 0;
+    private RSSItem selectedItem;
 
     public void initScene(SidebarController sidebarController, SceneMode sceneMode, RSSChannel rssChannel){
+
+        detailPane.setOpacity(0);
+        detailPane.setDisable(true);
+
         this.sidebarController = sidebarController;
         this.sceneMode = sceneMode;
         this.rssChannel = rssChannel;
 
         updatePrompts();
-        getCategoriesWithChannels();
+
+        if (sceneMode == SceneMode.NewPosts){
+
+            getCategoriesWithChannels();
+        }
+        else if(sceneMode == SceneMode.ReadLater){
+
+        }
+        else if(sceneMode == SceneMode.Favorites){
+
+        }
+        else if (sceneMode == SceneMode.Channel){
+
+            downloadChannel(rssChannel);
+        }
     }
 
     private void getCategoriesWithChannels(){
@@ -70,6 +95,27 @@ public class PostsController{
         new Thread(getCategoriesTask).start();
     }
 
+    private void getItems(){
+
+        Task<ArrayList<RSSItem>> getItemsTask = new Task<>() {
+
+            @Override
+            public ArrayList<RSSItem> call() throws Exception {
+                return DBManager.getItems();
+            }
+        };
+
+        getItemsTask.setOnFailed(event -> {
+            getItemsTask.getException().printStackTrace();
+        });
+
+        getItemsTask.setOnSucceeded(event ->{
+            updateCenterPane(getItemsTask.getValue());
+        });
+
+        new Thread(getItemsTask).start();
+    }
+
     private void downloadCategoryChannels(ArrayList<RSSCategory> rssCategories){
 
         Task startDownloadTask = new Task(){
@@ -78,28 +124,67 @@ public class PostsController{
             protected Object call() throws Exception {
 
                 DownloadManager.startSerialDownload(rssCategories);
+                return null;
+            }
+        };
+
+        startDownloadTask.setOnRunning(workerStateEvent -> {
+            updateCenterPane(null);
+        });
+
+        startDownloadTask.setOnSucceeded(event -> {
+            getItems();
+        });
+
+        new Thread(startDownloadTask).start();
+    }
+
+    private void downloadChannel(RSSChannel rssChannel){
+
+        Task startDownloadTask = new Task(){
+
+            @Override
+            protected Object call() throws Exception {
+
+                DownloadManager.startDownloadForChannel(rssChannel);
 
                 return null;
             }
         };
 
         startDownloadTask.setOnRunning(workerStateEvent -> {
-            updatePlaceHolder();
+            updateCenterPane(null);
         });
-        startDownloadTask.setOnSucceeded(event -> {
 
-            System.out.println("All Channels Downloaded");
+        startDownloadTask.setOnSucceeded(event -> {
+            getItems();
         });
 
         new Thread(startDownloadTask).start();
     }
 
-    private void updatePlaceHolder(){
+    private void updateCenterPane(ArrayList<RSSItem> rssItems){
 
         if(DownloadManager.isDownloading){
 
             PlaceHolderView placeHolderView = new PlaceHolderView("Downloading Feeds...");
             masterPane.setCenter(placeHolderView);
+        }
+        else{
+
+            System.out.println("All Channels Downloaded");
+
+            if (rssItems != null && rssItems.size() > 0){
+
+                PostGridView gridView = new PostGridView(this, rssItems);
+                masterPane.setCenter(gridView);
+            }
+            else
+            {
+                PlaceHolderView placeHolderView = new PlaceHolderView("Add content to get started.");
+                masterPane.setCenter(placeHolderView);
+            }
+
         }
     }
 
@@ -128,50 +213,52 @@ public class PostsController{
         labelSubtitle.setText(""); //Update with the response time
     }
 
-    private void updateGrid(){ //Take This To PostView File
+    public void showPostDetail(RSSItem rssItem){
 
-        int numberOfRows = Math.round((float) itemArrayList.size() * (float) (2.0 / 3.0));
+        selectedItem = rssItem;
+        updateDetailPane();
+    }
 
-        gridPane.getRowConstraints().clear();
+    private void updateDetailPane(){
 
-        for (int row = 0; row < numberOfRows; row++) {
+        detailPane.setOpacity(1);
+        detailPane.setDisable(false);
 
-            if (row % 2 != 0) {
+        labelDetailTitle.setText(selectedItem.getTitle());
 
-                addGridCell(0, row, 2, 1);
+        webViewContent.getEngine().setUserStyleSheetLocation(getClass().getResource("/css/webviewStyle.css").toString());
+        webViewContent.getEngine().loadContent(selectedItem.getDescription());
+    }
 
-            }
-            else {
+    @FXML
+    private void onBackButtonClick(MouseEvent event){
 
-                addGridCell(0, row, 1, 1);
-                addGridCell(1, row, 1, 1);
-            }
+        detailPane.setOpacity(0);
+        detailPane.setDisable(true);
+    }
 
-            RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setMinHeight(200);
-            rowConstraints.setMaxHeight(200);
-            rowConstraints.setPrefHeight(200);
-            rowConstraints.setVgrow(Priority.ALWAYS);
+    @FXML
+    private void onReadLaterButtonClick(MouseEvent event){
 
-            gridPane.getRowConstraints().add(rowConstraints);
+        System.out.println("Add to Read Later");
+    }
 
+    @FXML
+    private void onFavoriteButtonClick(MouseEvent event){
+
+        System.out.println("Add to favorites");
+        updateFavoriteIcon();
+    }
+
+    private void updateFavoriteIcon(){
+
+        if (iconFavorite.getIconName().equals(emptyStar)){
+
+            iconFavorite.setIconName(fullStar);
         }
-    }
-
-    private void addGridCell(int col, int row, int colSpan, int rowSpan){
-
-        RSSItem centerItem = itemArrayList.get(itemIndex++);
-        PostGridCell cell = new PostGridCell(centerItem);
-        gridPane.add(cell, col, row, colSpan, rowSpan); //node, col, row, width, height
-        cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-
-            PostGridCell tappedCell = (PostGridCell) event.getSource();
-            showPostDetail(tappedCell.getRssItem());
-        });
-    }
-
-    private void showPostDetail(RSSItem rssItem){
-
-        sidebarController.showPostsDetail(rssChannel, rssItem, sceneMode);
+        else
+        {
+            iconFavorite.setIconName(emptyStar);
+        }
     }
 }

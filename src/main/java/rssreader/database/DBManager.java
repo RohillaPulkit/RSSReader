@@ -2,6 +2,7 @@ package rssreader.database;
 
 import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
+import rssreader.model.RSSItem;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class DBManager {
                 Boolean isSelected = true; //True as we will getting channels for selected categories only
 
                 RSSCategory category = map.getOrDefault(id, new RSSCategory(id, name, imageURL, isSelected));
-                RSSChannel channel = new RSSChannel(channelName, channelURL);
+                RSSChannel channel = new RSSChannel(id, channelName, channelURL);
                 category.addChannel(channel);
 
                 map.put(id, category);
@@ -116,6 +117,50 @@ public class DBManager {
             }
 
             ArrayList<RSSCategory> list = new ArrayList<>(map.values());
+            return list;
+        }
+    }
+
+    public static ArrayList<RSSItem> getItems() throws SQLException{
+
+        ArrayList<RSSItem> list = new ArrayList<>();
+
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String query = "SELECT * from Item";
+
+        try {
+
+            dbConnection = DBManager.connector();
+            preparedStatement = dbConnection.prepareStatement(query);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                int category = resultSet.getInt("Category");
+                String channelName = resultSet.getString("ChannelName");
+                String title = resultSet.getString("Title");
+                String description = resultSet.getString("Description");
+                String publicationDate = resultSet.getString("PublicationDate");
+                String imageURL = resultSet.getString("ImageURL");
+
+                RSSItem item = new RSSItem(category, channelName, title, description, imageURL, publicationDate);
+                list.add(item);
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
             return list;
         }
     }
@@ -146,6 +191,60 @@ public class DBManager {
 
             preparedStatement.executeBatch();
             dbConnection.commit();
+        }
+        catch (SQLException sqlEx){
+            sqlEx.printStackTrace();
+            dbConnection.rollback();
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+
+    }
+
+    public static void insertRSSItems(ArrayList<RSSItem> items) throws SQLException{
+
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String insertQuery = "INSERT or IGNORE INTO Item VALUES(?,?,?,?,?,?)"; //Category, ChannelName, Title, Description, PublicationDate, ImageURL
+
+        try {
+
+            dbConnection = DBManager.connector();
+            dbConnection.setAutoCommit(false); //Batch Update
+
+            preparedStatement = dbConnection.prepareStatement(insertQuery);
+
+            for (RSSItem item: items){
+
+                int category = item.getCategory();
+                String channelName = item.getChannelName();
+                String title = item.getTitle();
+                String description = item.getDescription();
+                String publicationDate = item.getPublicationDate();
+                String imageURL = item.getImageURL();
+
+                preparedStatement.setInt(1, category);
+                preparedStatement.setString(2, channelName);
+                preparedStatement.setString(3, title);
+                preparedStatement.setString(4, description);
+                preparedStatement.setString(5, publicationDate);
+                preparedStatement.setString(6, imageURL);
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+            dbConnection.commit();
+
+            System.out.println("Inserted Data");
         }
         catch (SQLException sqlEx){
             sqlEx.printStackTrace();

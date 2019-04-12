@@ -146,24 +146,6 @@ public class SidebarController implements Initializable {
         }
     }
 
-    public void showPostsDetail(RSSChannel rssChannel, RSSItem rssItem, PostsController.SceneMode sceneMode){
-
-        System.out.println("Showing detail for "+rssItem.getTitle());
-
-        try {
-
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/postDetail.fxml"));
-            Parent root = fxmlLoader.load();
-            root.getStylesheets().add(getClass().getResource("/css/postDetail.css").toExternalForm());
-            PostDetailController detailController = fxmlLoader.getController();
-            detailController.initScreen(this, rssChannel, rssItem, sceneMode);
-
-            masterPane.setCenter(root);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public void onDownloadButtonClick(){
 
