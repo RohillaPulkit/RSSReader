@@ -15,6 +15,9 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import rssreader.model.RSSItem;
 
 public class PostGridCell extends GridPane {
@@ -22,16 +25,17 @@ public class PostGridCell extends GridPane {
     private Label labelDate;
     private Label labelChannelName;
     private ImageView imageView;
+    private boolean isOddRow;
 
     private RSSItem rssItem;
 
-    public PostGridCell(RSSItem rssItem){
+    public PostGridCell(RSSItem rssItem, boolean isOddRow){
         labelTitle = new Label();
         labelDate = new Label();
         labelChannelName= new Label();
         imageView = new ImageView();
-
         labelTitle.setWrapText(true);
+        this.isOddRow = isOddRow;
 
         this.rssItem = rssItem;
 
@@ -49,10 +53,14 @@ public class PostGridCell extends GridPane {
         setMargin(labelChannelName, new Insets(0,0,0,10));
 
         setMaxWidth(Double.MAX_VALUE);
-        setMaxHeight(200);
-        setMinHeight(200);
-        setPrefHeight(200);
+//        setMaxHeight(200);
+//        setMinHeight(200);
+//        setPrefHeight(200);
         setPrefWidth(Control.USE_COMPUTED_SIZE);
+        prefHeightProperty().bind(prefWidthProperty().divide(2));
+        minHeightProperty().bind(minWidthProperty().divide(2));
+        maxHeightProperty().bind(maxWidthProperty().divide(2));
+
         setHgap(10);
         setVgap(5);
 
@@ -113,9 +121,22 @@ public class PostGridCell extends GridPane {
 
         getColumnConstraints().add(column2Constraints);
 
-        labelTitle.setText(rssItem.getTitle());
+        if(isOddRow) {
+            labelTitle.setText(rssItem.getTitle());
+            labelTitle.setFont(Font.font("Helvetica ", 18));
+        }
+        else{
+            labelTitle.setText(rssItem.getTitle());
+            labelTitle.setFont(Font.font("Helvetica ", 23));
+
+        }
         labelDate.setText(rssItem.getPublicationDate().toString());
+        labelDate.setFont(Font.font("Arial", FontPosture.ITALIC,13));
+        labelDate.setTextFill(Color.GREY);
+
         labelChannelName.setText(rssItem.getChannelName());
+        labelChannelName.setFont(Font.font("Cambria",  FontWeight.BOLD, 13));
+        labelChannelName.setTextFill(Color.DARKGRAY);
 
         Task<Image> getImageTask = new Task<>() {
 

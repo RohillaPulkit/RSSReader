@@ -213,7 +213,7 @@ public class DBManager {
 
         Connection dbConnection = null;
         PreparedStatement preparedStatement = null;
-        String insertQuery = "INSERT or IGNORE INTO Item VALUES(?,?,?,?,?,?)"; //Category, ChannelName, Title, Description, PublicationDate, ImageURL
+        String insertQuery = "INSERT or REPLACE INTO Item VALUES(?,?,?,?,?,?, 0, 0)"; //Category, ChannelName, Title, Description, PublicationDate, ImageURL
 
         try {
 
@@ -263,4 +263,32 @@ public class DBManager {
 
     }
 
+    public static void clearItems() throws SQLException{
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String deleteQuery = "DELETE FROM Item;";
+
+        try {
+            dbConnection = DBManager.connector();
+
+            preparedStatement = dbConnection.prepareStatement(deleteQuery);
+            preparedStatement.execute();
+            System.out.println("Deleted all items");
+        }
+        catch (SQLException sqlEx){
+            sqlEx.printStackTrace();
+
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+
+    }
 }

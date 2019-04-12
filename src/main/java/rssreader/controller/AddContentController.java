@@ -105,7 +105,7 @@ public class AddContentController implements Initializable {
 
             @Override
             protected Object call() throws Exception {
-
+                DBManager.clearItems();
                 DBManager.updateCategoriesSelection(categories);
                 return null;
             }

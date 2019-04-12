@@ -1,16 +1,22 @@
 package rssreader.utility;
 
+import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 import javafx.concurrent.Task;
+import org.jdom2.Element;
 import rssreader.database.DBManager;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 
+import javax.lang.model.util.Elements;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class RSSChannelDownloader implements Runnable{
 
@@ -32,15 +38,26 @@ public class RSSChannelDownloader implements Runnable{
             SyndFeed feed = input.build(new XmlReader(feedUrl));
             rssItems = new ArrayList<>();
 
+            Date date = new Date();
+            String sqlDateFormat = "yyyy-mm-dd hh:mm:ss";
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(sqlDateFormat);
+            String dateString = dateFormatter.format(date);
+
+            String defaultImageURL = "https://i.pinimg.com/474x/51/e3/41/51e3411c899b3074d6cce3aa5e83fe09.jpg";
+
             for (SyndEntry entry : feed.getEntries()){
 
                 int category = rssChannel.getCategory();
                 String channelName = rssChannel.getName();
                 String title = entry.getTitle();
                 String description = entry.getDescription().getValue();
-                // Add/find  date and image url
+                
+//                List<Element> arrayList = entry.getForeignMarkup();
+//                for(Element ele: arrayList){
+//                    System.out.println("ele" + ele);
+//                }
 
-                rssItems.add(new RSSItem(category, channelName, title, description, "", ""));
+                rssItems.add(new RSSItem(category, channelName, title, description, defaultImageURL, dateString));
             }
 
             Task task = new Task() {

@@ -18,9 +18,11 @@ public class PostGridView extends ScrollPane {
 
     private GridPane postGridPane;
     private PostsController postsController;
+    public boolean isOddRow = false;
 
     private ArrayList<RSSItem> rssItemArrayList;
     private int index = 0;
+    ColumnConstraints columnConstraints;
 
     public PostGridView(PostsController postsController, ArrayList<RSSItem> rssItemArrayList){
 
@@ -54,14 +56,7 @@ public class PostGridView extends ScrollPane {
         postGridPane.setPrefSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
         postGridPane.setMaxSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
 
-        ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setHgrow(Priority.ALWAYS);
-        columnConstraints.setFillWidth(true);
-        columnConstraints.setMinWidth(10);
-        columnConstraints.setPrefWidth(100);
-        columnConstraints.setPercentWidth(50);
-
-        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints = new ColumnConstraints();
         columnConstraints.setHgrow(Priority.ALWAYS);
         columnConstraints.setFillWidth(true);
         columnConstraints.setMinWidth(10);
@@ -81,18 +76,20 @@ public class PostGridView extends ScrollPane {
 
             if (gridRow % 2 != 0) {
 
+                isOddRow = false;
                 addGridCell(0, gridRow, 2, 1);
+
 
             }
             else {
-
+                isOddRow = true;
                 addGridCell(0, gridRow, 1, 1);
                 addGridCell(1, gridRow, 1, 1);
             }
 
             RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setMinHeight(200);
-            rowConstraints.setMaxHeight(200);
+            rowConstraints.setMinHeight(10);
+            rowConstraints.setMaxHeight(500);
             rowConstraints.setPrefHeight(200);
             rowConstraints.setVgrow(Priority.ALWAYS);
 
@@ -102,11 +99,14 @@ public class PostGridView extends ScrollPane {
 
     private void addGridCell(int col, int row, int colSpan, int rowSpan){
 
-        RSSItem centerItem = rssItemArrayList.get(index++);
-        PostGridCell cell = new PostGridCell(centerItem);
-        postGridPane.add(cell, col, row, colSpan, rowSpan); //node, col, row, width, height
-        cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        if (index >= rssItemArrayList.size())
+            return;
 
+        RSSItem centerItem = rssItemArrayList.get(index++);
+        PostGridCell cell = new PostGridCell(centerItem, isOddRow);
+        postGridPane.add(cell, col, row, colSpan, rowSpan); //node, col, row, width, height
+
+        cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
             PostGridCell tappedCell = (PostGridCell) event.getSource();
             postsController.showPostDetail(tappedCell.getRssItem());
         });
