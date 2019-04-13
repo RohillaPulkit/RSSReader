@@ -35,10 +35,13 @@ public class RSSChannelDownloader implements Runnable{
             SyndFeed feed = input.build(new XmlReader(feedUrl));
             rssItems = new ArrayList<>();
 
-            Date date = new Date();
-            String sqlDateFormat = "yyyy-mm-dd hh:mm:ss";
+            Date date = feed.getPublishedDate();
+            if (date == null){
+                date = new Date();
+            }
+
+            String sqlDateFormat = "yyyy-MM-dd HH:mm:ss";
             SimpleDateFormat dateFormatter = new SimpleDateFormat(sqlDateFormat);
-            String dateString = dateFormatter.format(date);
 
             String defaultImageURL = "https://i.pinimg.com/474x/51/e3/41/51e3411c899b3074d6cce3aa5e83fe09.jpg";
 
@@ -50,10 +53,18 @@ public class RSSChannelDownloader implements Runnable{
                 String description = entry.getDescription().getValue();
                 Boolean isReadLater = false;
                 Boolean isFavorite = false;
+                Date pubDate = entry.getPublishedDate();
+
+                if(pubDate != null){
+                    date = pubDate;
+                }
+
 //                List<Element> arrayList = entry.getForeignMarkup();
 //                for(Element ele: arrayList){
 //                    System.out.println("ele" + ele);
 //                }
+
+                String dateString = dateFormatter.format(date);
 
                 rssItems.add(new RSSItem(category, channelName, title, description, defaultImageURL,
                         dateString, isReadLater, isFavorite));

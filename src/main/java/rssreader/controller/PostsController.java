@@ -15,6 +15,7 @@ import rssreader.utility.DownloadManager;
 import rssreader.view.PlaceHolderView;
 import rssreader.view.PostGridView;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class PostsController{
@@ -46,6 +47,9 @@ public class PostsController{
     private RSSChannel rssChannel;
     private RSSItem selectedItem;
     private long downloadStartTime;
+    private long downloadEndTime;
+
+    private boolean isParallelDownload = false;
 
     public void initScene(SidebarController sidebarController, SceneMode sceneMode, RSSChannel rssChannel){
 
@@ -56,6 +60,7 @@ public class PostsController{
         this.rssChannel = rssChannel;
 
         updatePrompts();
+        getDownloadMode();
 
         if (sceneMode == SceneMode.NewPosts){
 
@@ -70,6 +75,17 @@ public class PostsController{
         else if (sceneMode == SceneMode.Channel){
 
             downloadChannel(rssChannel);
+        }
+    }
+
+    private void getDownloadMode(){
+
+        try{
+
+            isParallelDownload = DBManager.getParallelDownloadFlag();
+        }
+        catch (SQLException ex){
+            ex.printStackTrace();
         }
     }
 
@@ -125,7 +141,13 @@ public class PostsController{
             @Override
             protected Object call() throws Exception {
 
-                DownloadManager.startParallelDownload(rssCategories);
+                if (isParallelDownload){
+                    DownloadManager.startParallelDownload(rssCategories);
+                }
+                else
+                {
+                    DownloadManager.startSerialDownload(rssCategories);
+                }
                 return null;
             }
         };
@@ -136,8 +158,7 @@ public class PostsController{
 
         startDownloadTask.setOnSucceeded(event -> {
 
-            long endTime = System.currentTimeMillis();
-            System.out.println("Time Taken :"+ (endTime - downloadStartTime) + "ms");
+            downloadEndTime = System.currentTimeMillis();
             getItems();
         });
 
@@ -172,7 +193,8 @@ public class PostsController{
 
         if(DownloadManager.isDownloading){
 
-            PlaceHolderView placeHolderView = new PlaceHolderView("Downloading Feeds...");
+            String message = isParallelDownload ? "Downloading Feeds Parallely..." : "Downloading Feeds Serially...";
+            PlaceHolderView placeHolderView = new PlaceHolderView(message);
             masterPane.setCenter(placeHolderView);
         }
         else{
@@ -183,6 +205,8 @@ public class PostsController{
 
                 PostGridView gridView = new PostGridView(this, rssItems);
                 masterPane.setCenter(gridView);
+
+                updateTimeLabel();
             }
             else
             {
@@ -218,14 +242,6 @@ public class PostsController{
         labelSubtitle.setText(""); //Update with the response time
     }
 
-    public void showPostDetail(RSSItem rssItem){
-
-        selectedItem = rssItem;
-        updateDetailPane();
-
-        detailPane.toFront();
-    }
-
     private void updateDetailPane(){
 
         labelDetailTitle.setText(selectedItem.getTitle());
@@ -234,6 +250,14 @@ public class PostsController{
         webViewContent.getEngine().loadContent(selectedItem.getDescription());
 
         updateFavoriteIcon();
+    }
+
+    public void showPostDetail(RSSItem rssItem){
+
+        selectedItem = rssItem;
+        updateDetailPane();
+
+        detailPane.toFront();
     }
 
     @FXML
@@ -266,6 +290,12 @@ public class PostsController{
         {
             iconFavorite.setIconName(emptyStar);
         }
+    }
+
+    private void updateTimeLabel(){
+
+        String message = "Downloaded Feeds in " + (downloadEndTime - downloadStartTime) + " ms";
+        labelSubtitle.setText(message);
     }
 
     //DBMethods

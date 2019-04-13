@@ -53,7 +53,7 @@ public class DownloadManager {
         DownloadManager.isDownloading = false;
     }
 
-   public static void startParallelDownload(ArrayList<RSSCategory> rssCategories){
+    public static void startParallelDownload(ArrayList<RSSCategory> rssCategories){
 
         DownloadManager.isDownloading = true;
 
@@ -75,7 +75,6 @@ public class DownloadManager {
 
        DownloadManager.isDownloading = false;
    }
-
 
 }
 

@@ -8,6 +8,7 @@ import rssreader.model.RSSItem;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Date;
 
@@ -42,8 +43,8 @@ public class DBManager {
 
                 int category = item.getCategory();
                 String channelName = item.getChannelName();
-                String title = item.getTitle();
-                String description = item.getDescription();
+                String title = item.getTitle().trim();
+                String description = item.getDescription().trim();
                 String publicationDate = item.getPublicationDate();
                 String imageURL = item.getImageURL();
 
@@ -200,6 +201,37 @@ public class DBManager {
 
     }
 
+    public static void updateDefaults(boolean isParallelDownload) throws SQLException{
+
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String updateQuery = "UPDATE Defaults SET IsParallelDownload = ?";
+
+        try {
+
+            int param = isParallelDownload ? 1 : 0;
+
+            dbConnection = DBManager.connector();
+            preparedStatement = dbConnection.prepareStatement(updateQuery);
+            preparedStatement.setInt(1, param);
+
+            preparedStatement.execute();
+        }
+        catch (SQLException sqlEx){
+            sqlEx.printStackTrace();
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+    }
+
     public static ArrayList<RSSCategory> getCategories() throws SQLException{
 
         ArrayList<RSSCategory> list = new ArrayList<>();
@@ -326,12 +358,10 @@ public class DBManager {
             dbConnection = DBManager.connector();
             preparedStatement = dbConnection.prepareStatement(query);
 
-
             if (sceneMode == PostsController.SceneMode.NewPosts){
 
                 Date now = new Date();
-                now.setTime(0);
-                String sqlDateFormat = "yyyy-mm-dd hh:mm:ss";
+                String sqlDateFormat = "yyyy-MM-dd";
                 SimpleDateFormat dateFormatter = new SimpleDateFormat(sqlDateFormat);
                 String dateString = dateFormatter.format(now);
 
@@ -351,6 +381,7 @@ public class DBManager {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
+
                 int category = resultSet.getInt("Category");
                 String channelName = resultSet.getString("ChannelName");
                 String title = resultSet.getString("Title");
@@ -379,6 +410,43 @@ public class DBManager {
             }
 
             return list;
+        }
+    }
+
+    public static boolean getParallelDownloadFlag() throws SQLException{
+
+        boolean isParallelDownload = false;
+
+        Connection dbConnection = null;
+        PreparedStatement preparedStatement = null;
+        String query = "SELECT * from Defaults";
+
+        try {
+
+            dbConnection = DBManager.connector();
+            preparedStatement = dbConnection.prepareStatement(query);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+
+                isParallelDownload = resultSet.getInt("IsParallelDownload") == 1 ? true : false;
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+
+            return isParallelDownload;
         }
     }
 

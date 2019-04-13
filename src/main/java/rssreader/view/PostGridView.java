@@ -1,5 +1,7 @@
 package rssreader.view;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -18,7 +20,6 @@ public class PostGridView extends ScrollPane {
 
     private GridPane postGridPane;
     private PostsController postsController;
-    public boolean isOddRow = false;
 
     private ArrayList<RSSItem> rssItemArrayList;
     private int index = 0;
@@ -70,47 +71,62 @@ public class PostGridView extends ScrollPane {
 
     public void updateGridView(){
 
-        int numberOfRows = Math.round((float) rssItemArrayList.size() * (float) (2.0 / 3.0));
+        Task task = new Task() {
+            
+            @Override
+            protected Object call() {
 
-        for (int gridRow = 0;  gridRow< numberOfRows; gridRow++) {
+                int numberOfRows = Math.round((float) rssItemArrayList.size() * (float) (2.0 / 3.0));
 
-            if (gridRow % 2 != 0) {
+                for (int gridRow = 0;  gridRow < numberOfRows; gridRow++) {
 
-                isOddRow = false;
-                addGridCell(0, gridRow, 2, 1);
+                    if (gridRow % 2 != 0) {
+
+                        addGridCell(0, gridRow, 2, 1, true);
 
 
+                    }
+                    else {
+                        addGridCell(0, gridRow, 1, 1, false);
+                        addGridCell(1, gridRow, 1, 1, false);
+                    }
+
+                    RowConstraints rowConstraints = new RowConstraints();
+                    rowConstraints.setMinHeight(10);
+                    rowConstraints.setMaxHeight(500);
+                    rowConstraints.setPrefHeight(200);
+                    rowConstraints.setVgrow(Priority.ALWAYS);
+
+                    Platform.runLater(() -> {
+                        postGridPane.getRowConstraints().add(rowConstraints);
+                    });
+                }
+
+                return null;
             }
-            else {
-                isOddRow = true;
-                addGridCell(0, gridRow, 1, 1);
-                addGridCell(1, gridRow, 1, 1);
-            }
+        };
+        new Thread(task).start();
 
-            RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setMinHeight(10);
-            rowConstraints.setMaxHeight(500);
-            rowConstraints.setPrefHeight(200);
-            rowConstraints.setVgrow(Priority.ALWAYS);
 
-            postGridPane.getRowConstraints().add(rowConstraints);
-        }
     }
 
-    private void addGridCell(int col, int row, int colSpan, int rowSpan){
+    private void addGridCell(int col, int row, int colSpan, int rowSpan, boolean isOddRow){
 
         if (index >= rssItemArrayList.size())
             return;
 
         RSSItem centerItem = rssItemArrayList.get(index++);
         PostGridCell cell = new PostGridCell(centerItem, isOddRow);
-        postGridPane.add(cell, col, row, colSpan, rowSpan); //node, col, row, width, height
 
-        cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            PostGridCell tappedCell = (PostGridCell) event.getSource();
-            postsController.showPostDetail(tappedCell.getRssItem());
+        Platform.runLater(() -> {
+            postGridPane.add(cell, col, row, colSpan, rowSpan); //node, col, row, width, height
+
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                PostGridCell tappedCell = (PostGridCell) event.getSource();
+                postsController.showPostDetail(tappedCell.getRssItem());
+            });
         });
-    }
 
+    }
 }
 

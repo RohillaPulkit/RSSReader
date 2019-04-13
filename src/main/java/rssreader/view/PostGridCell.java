@@ -30,6 +30,7 @@ public class PostGridCell extends GridPane {
     private RSSItem rssItem;
 
     public PostGridCell(RSSItem rssItem, boolean isOddRow){
+
         labelTitle = new Label();
         labelDate = new Label();
         labelChannelName= new Label();
@@ -120,14 +121,13 @@ public class PostGridCell extends GridPane {
         column2Constraints.setPercentWidth(50);
 
         getColumnConstraints().add(column2Constraints);
+        labelTitle.setText(rssItem.getTitle());
 
         if(isOddRow) {
-            labelTitle.setText(rssItem.getTitle());
-            labelTitle.setFont(Font.font("Helvetica ", 18));
+            labelTitle.setFont(Font.font("Helvetica ", 24));
         }
         else{
-            labelTitle.setText(rssItem.getTitle());
-            labelTitle.setFont(Font.font("Helvetica ", 24));
+            labelTitle.setFont(Font.font("Helvetica ", 18));
         }
 
         labelDate.setText(rssItem.getPublicationDate());

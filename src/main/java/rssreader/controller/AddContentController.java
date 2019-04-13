@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 public class AddContentController implements Initializable {
 
     @FXML private TilePane tilePane;
-    @FXML private Button btnDownload;
+    @FXML private Button btnSerialDownload, btnParallelDownload;
 
     private SidebarController sidebarController;
 
@@ -59,9 +59,16 @@ public class AddContentController implements Initializable {
     }
 
     @FXML
-    private void onDownloadButtonClick(MouseEvent event){
+    private void onSerialDownloadButtonClick(MouseEvent event){
 
-        updateCategorySelection();
+        updateCategorySelection(false);
+    }
+
+    @FXML
+    private void onParallelDownloadButtonClick(MouseEvent event){
+
+        updateCategorySelection(true);
+
     }
 
     private void updateContentPane(){
@@ -99,12 +106,14 @@ public class AddContentController implements Initializable {
         updateDownloadButtonState();
     }
 
-    public void updateCategorySelection(){
+    public void updateCategorySelection(boolean isParallelDownload){
 
         Task updateCategoryTask = new Task() {
 
             @Override
             protected Object call() throws Exception {
+
+                DBManager.updateDefaults(isParallelDownload);
                 DBManager.clearItems();
                 DBManager.updateCategoriesSelection(categories);
                 return null;
@@ -128,11 +137,14 @@ public class AddContentController implements Initializable {
 
         if (selectionModel.size() > 0){
 
-            btnDownload.setDisable(false);
+            btnSerialDownload.setDisable(false);
+            btnParallelDownload.setDisable(false);
+
         }
         else
         {
-            btnDownload.setDisable(true);
+            btnSerialDownload.setDisable(true);
+            btnParallelDownload.setDisable(true);
         }
     }
 

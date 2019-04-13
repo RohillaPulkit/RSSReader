@@ -24,6 +24,7 @@ rssreader/controller/PostsController$5.class
 rssreader/controller/PostsController$1.class
 rssreader/controller/PostsController$6.class
 rssreader/view/PlaceHolderView.class
+rssreader/view/PostGridView$1.class
 rssreader/view/ContentTileCell$1.class
 rssreader/controller/AddContentController$2.class
 rssreader/model/RSSItem.class
