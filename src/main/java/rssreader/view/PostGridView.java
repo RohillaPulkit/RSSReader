@@ -23,7 +23,6 @@ public class PostGridView extends ScrollPane {
 
     private ArrayList<RSSItem> rssItemArrayList;
     private int index = 0;
-    ColumnConstraints columnConstraints;
 
     public PostGridView(PostsController postsController, ArrayList<RSSItem> rssItemArrayList){
 
@@ -57,14 +56,22 @@ public class PostGridView extends ScrollPane {
         postGridPane.setPrefSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
         postGridPane.setMaxSize(Control.USE_COMPUTED_SIZE, Control.USE_COMPUTED_SIZE);
 
-        columnConstraints = new ColumnConstraints();
+        ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setHgrow(Priority.ALWAYS);
         columnConstraints.setFillWidth(true);
         columnConstraints.setMinWidth(10);
         columnConstraints.setPrefWidth(100);
         columnConstraints.setPercentWidth(50);
 
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints2.setHgrow(Priority.ALWAYS);
+        columnConstraints2.setFillWidth(true);
+        columnConstraints2.setMinWidth(10);
+        columnConstraints2.setPrefWidth(100);
+        columnConstraints2.setPercentWidth(50);
+
         postGridPane.getColumnConstraints().add(columnConstraints);
+        postGridPane.getColumnConstraints().add(columnConstraints2);
 
         setContent(postGridPane);
     }

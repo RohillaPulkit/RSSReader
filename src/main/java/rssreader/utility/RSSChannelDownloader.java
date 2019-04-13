@@ -1,5 +1,9 @@
 package rssreader.utility;
 
+import com.rometools.modules.mediarss.MediaEntryModule;
+import com.rometools.modules.mediarss.types.MediaContent;
+import com.rometools.modules.mediarss.types.MediaGroup;
+import com.rometools.rome.feed.module.Module;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -43,7 +47,7 @@ public class RSSChannelDownloader implements Runnable{
             String sqlDateFormat = "yyyy-MM-dd HH:mm:ss";
             SimpleDateFormat dateFormatter = new SimpleDateFormat(sqlDateFormat);
 
-            String defaultImageURL = "https://i.pinimg.com/474x/51/e3/41/51e3411c899b3074d6cce3aa5e83fe09.jpg";
+            String defaultImageURL = "http://www.webdesignhot.com/wp-content/uploads/2016/10/Gradient-Blue-Color-and-Triangle-Polygon-Pattern-Background.jpg";
 
             for (SyndEntry entry : feed.getEntries()){
 
@@ -59,14 +63,28 @@ public class RSSChannelDownloader implements Runnable{
                     date = pubDate;
                 }
 
-//                List<Element> arrayList = entry.getForeignMarkup();
-//                for(Element ele: arrayList){
-//                    System.out.println("ele" + ele);
-//                }
+                String imageURL = null;
+
+                outerloop: for (Module module : entry.getModules()) {
+                    if (module instanceof MediaEntryModule) {
+                        MediaEntryModule media = (MediaEntryModule)module;
+                        for (MediaGroup group : media.getMediaGroups()) {
+                            for(MediaContent content : group.getContents()){
+                                imageURL = content.getReference().toString();
+                                break outerloop;
+                            }
+                        }
+                    }
+                }
+
+                if(imageURL == null){
+
+                    imageURL = defaultImageURL;
+                }
 
                 String dateString = dateFormatter.format(date);
 
-                rssItems.add(new RSSItem(category, channelName, title, description, defaultImageURL,
+                rssItems.add(new RSSItem(category, channelName, title, description, imageURL,
                         dateString, isReadLater, isFavorite));
             }
 
