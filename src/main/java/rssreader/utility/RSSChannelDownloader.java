@@ -54,7 +54,7 @@ public class RSSChannelDownloader implements Runnable{
                 int category = rssChannel.getCategory();
                 String channelName = rssChannel.getName();
                 String title = entry.getTitle();
-                String description = entry.getDescription().getValue();
+                String description = entry.getDescription() != null ? entry.getDescription().getValue() : "";
                 Boolean isReadLater = false;
                 Boolean isFavorite = false;
                 Date pubDate = entry.getPublishedDate();

@@ -15,6 +15,7 @@ import rssreader.database.DBManager;
 import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
+import rssreader.utility.DownloadManager;
 import rssreader.view.ChannelListViewCell;
 
 import java.net.URL;
@@ -43,6 +44,8 @@ public class SidebarController implements Initializable {
     @FXML
     private void onMenuButtonClick(MouseEvent event){
 
+        DownloadManager.stop();
+
         if (event.getSource() == btnNewPosts){
 
             navigateToPosts(PostsController.SceneMode.NewPosts, null);
@@ -61,6 +64,7 @@ public class SidebarController implements Initializable {
     @FXML
     private void onAddContentClick(MouseEvent event){
 
+        DownloadManager.stop();
         try {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
@@ -78,6 +82,8 @@ public class SidebarController implements Initializable {
     }
 
     private void onChannelItemClick(RSSChannel channel){
+
+        DownloadManager.stop();
 
         navigateToPosts(PostsController.SceneMode.Channel, channel);
     }
