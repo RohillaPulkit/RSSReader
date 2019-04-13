@@ -127,15 +127,15 @@ public class PostGridCell extends GridPane {
         }
         else{
             labelTitle.setText(rssItem.getTitle());
-            labelTitle.setFont(Font.font("Helvetica ", 23));
-
+            labelTitle.setFont(Font.font("Helvetica ", 24));
         }
-        labelDate.setText(rssItem.getPublicationDate().toString());
-        labelDate.setFont(Font.font("Arial", FontPosture.ITALIC,13));
+
+        labelDate.setText(rssItem.getPublicationDate());
+        labelDate.setFont(Font.font("Arial", FontPosture.ITALIC,14));
         labelDate.setTextFill(Color.GREY);
 
         labelChannelName.setText(rssItem.getChannelName());
-        labelChannelName.setFont(Font.font("Cambria",  FontWeight.BOLD, 13));
+        labelChannelName.setFont(Font.font("Georgia",  FontWeight.BOLD, 14));
         labelChannelName.setTextFill(Color.DARKGRAY);
 
         Task<Image> getImageTask = new Task<>() {

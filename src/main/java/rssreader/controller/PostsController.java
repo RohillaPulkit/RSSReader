@@ -49,8 +49,7 @@ public class PostsController{
 
     public void initScene(SidebarController sidebarController, SceneMode sceneMode, RSSChannel rssChannel){
 
-        detailPane.setOpacity(0);
-        detailPane.setDisable(true);
+        detailPane.toBack();
 
         this.sidebarController = sidebarController;
         this.sceneMode = sceneMode;
@@ -63,10 +62,10 @@ public class PostsController{
             getCategoriesWithChannels();
         }
         else if(sceneMode == SceneMode.ReadLater){
-
+            getItems();
         }
         else if(sceneMode == SceneMode.Favorites){
-
+            getItems();
         }
         else if (sceneMode == SceneMode.Channel){
 
@@ -102,7 +101,7 @@ public class PostsController{
 
             @Override
             public ArrayList<RSSItem> call() throws Exception {
-                return DBManager.getItems();
+                return DBManager.getItems(sceneMode, rssChannel);
             }
         };
 
@@ -223,42 +222,43 @@ public class PostsController{
 
         selectedItem = rssItem;
         updateDetailPane();
+
+        detailPane.toFront();
     }
 
     private void updateDetailPane(){
-
-        detailPane.setOpacity(1);
-        detailPane.setDisable(false);
 
         labelDetailTitle.setText(selectedItem.getTitle());
 
         webViewContent.getEngine().setUserStyleSheetLocation(getClass().getResource("/css/webviewStyle.css").toString());
         webViewContent.getEngine().loadContent(selectedItem.getDescription());
+
+        updateFavoriteIcon();
     }
 
     @FXML
     private void onBackButtonClick(MouseEvent event){
 
-        detailPane.setOpacity(0);
-        detailPane.setDisable(true);
+        detailPane.toBack();
     }
 
     @FXML
     private void onReadLaterButtonClick(MouseEvent event){
 
-        System.out.println("Add to Read Later");
+        selectedItem.setReadLater(true);
+        updateReadLaterFlag();
     }
 
     @FXML
     private void onFavoriteButtonClick(MouseEvent event){
 
-        System.out.println("Add to favorites");
-        updateFavoriteIcon();
+        selectedItem.setFavorite(!selectedItem.getFavorite());
+        updateFavoriteFlag();
     }
 
     private void updateFavoriteIcon(){
 
-        if (iconFavorite.getIconName().equals(emptyStar)){
+        if (selectedItem.getFavorite()){
 
             iconFavorite.setIconName(fullStar);
         }
@@ -267,4 +267,51 @@ public class PostsController{
             iconFavorite.setIconName(emptyStar);
         }
     }
+
+    //DBMethods
+    public void updateReadLaterFlag(){
+
+        Task updateItem = new Task() {
+
+            @Override
+            protected Object call() throws Exception {
+                DBManager.updateItemReadLater(selectedItem);
+                return null;
+            }
+        };
+
+        updateItem.setOnFailed(event -> {
+            updateItem.getException().printStackTrace();
+        });
+
+        updateItem.setOnSucceeded(event ->{
+            System.out.println("Read Later Flag Updated");
+        });
+
+        new Thread(updateItem).start();
+    }
+
+    public void updateFavoriteFlag(){
+
+        Task updateItem = new Task() {
+
+            @Override
+            protected Object call() throws Exception {
+                DBManager.updateItemFavorite(selectedItem);
+                return null;
+            }
+        };
+
+        updateItem.setOnFailed(event -> {
+            updateItem.getException().printStackTrace();
+        });
+
+        updateItem.setOnSucceeded(event ->{
+            updateFavoriteIcon();
+            System.out.println("Favorite Flag Updated");
+        });
+
+        new Thread(updateItem).start();
+    }
+
 }

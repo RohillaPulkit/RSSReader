@@ -6,6 +6,10 @@
     -fx-background-color: #1f252b;
 }
 
+#contentPane{
+    -fx-background-color: #191919;
+}
+
 .menuButton{
     -fx-alignment: center-left;
     -fx-padding: 0 0 0 30;

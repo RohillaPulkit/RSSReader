@@ -1,9 +1,12 @@
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/utility/DownloadManager.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/AddContentController.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/PostsController.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/PostGridView.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/utility/RSSChannelDownloader.java
+/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/PlaceHolderView.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/SidebarController.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/PostGridCell.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/ChannelListViewCell.java
-/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/AddContentController.java
-/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/PostsController.java
-/Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/controller/PostDetailController.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/model/RSSItem.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/view/ContentTileCell.java
 /Users/uf/Desktop/Home/Git/RSSReader/src/main/java/rssreader/launcher/Main.java
