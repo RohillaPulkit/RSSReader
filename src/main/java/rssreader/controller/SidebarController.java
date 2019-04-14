@@ -44,8 +44,7 @@ public class SidebarController implements Initializable {
     @FXML
     private void onMenuButtonClick(MouseEvent event){
 
-        DownloadManager.stop();
-
+        stopDownloading();
         if (event.getSource() == btnNewPosts){
 
             navigateToPosts(PostsController.SceneMode.NewPosts, null);
@@ -64,7 +63,7 @@ public class SidebarController implements Initializable {
     @FXML
     private void onAddContentClick(MouseEvent event){
 
-        DownloadManager.stop();
+        stopDownloading();
         try {
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/layout/addContent.fxml"));
@@ -83,9 +82,28 @@ public class SidebarController implements Initializable {
 
     private void onChannelItemClick(RSSChannel channel){
 
-        DownloadManager.stop();
-
+        stopDownloading();
         navigateToPosts(PostsController.SceneMode.Channel, channel);
+    }
+
+    private void stopDownloading(){
+
+        Task stopTask = new Task() {
+
+            @Override
+            public Object call() throws Exception {
+
+                DownloadManager.stop();
+
+                return null;
+            }
+        };
+
+        stopTask.setOnSucceeded(event ->{
+            System.out.println("Stopped Downloading");
+        });
+
+        new Thread(stopTask).start();
     }
 
     private void getCategoriesWithChannels(){
