@@ -1,8 +1,0 @@
-.cell{
-    -fx-background-color:white;
-    -fx-background-radius:5;
-}
-
-.cell:hover{
-    -fx-opacity: 0.7;
-}
