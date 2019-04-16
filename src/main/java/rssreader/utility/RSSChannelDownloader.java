@@ -47,7 +47,7 @@ public class RSSChannelDownloader implements Runnable{
             String sqlDateFormat = "yyyy-MM-dd HH:mm:ss";
             SimpleDateFormat dateFormatter = new SimpleDateFormat(sqlDateFormat);
 
-            String defaultImageURL = "http://www.webdesignhot.com/wp-content/uploads/2016/10/Gradient-Blue-Color-and-Triangle-Polygon-Pattern-Background.jpg";
+            String defaultImageURL = "https://drive.google.com/uc?id=1pbu-afM8sZm3QKSfO3DBNbT699cn36fu";
 
             for (SyndEntry entry : feed.getEntries()){
 

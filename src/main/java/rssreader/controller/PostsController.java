@@ -12,6 +12,7 @@ import rssreader.model.RSSCategory;
 import rssreader.model.RSSChannel;
 import rssreader.model.RSSItem;
 import rssreader.utility.DownloadManager;
+import rssreader.view.ActivityIndicatorView;
 import rssreader.view.PlaceHolderView;
 import rssreader.view.PostGridView;
 
@@ -194,7 +195,7 @@ public class PostsController{
         if(DownloadManager.isDownloading){
 
             String message = isParallelDownload ? "Downloading Feeds Parallely..." : "Downloading Feeds Serially...";
-            PlaceHolderView placeHolderView = new PlaceHolderView(message);
+            ActivityIndicatorView placeHolderView = new ActivityIndicatorView(message);
             masterPane.setCenter(placeHolderView);
         }
         else{

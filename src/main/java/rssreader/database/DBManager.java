@@ -336,21 +336,21 @@ public class DBManager {
 
         Connection dbConnection = null;
         PreparedStatement preparedStatement = null;
-        String query = "SELECT * from Item";
+        String query = "SELECT * from Item ORDER BY PublicationDate DESC";
 
         switch (sceneMode){
 
             case NewPosts:
-                query = "SELECT * FROM Item WHERE PublicationDate > ?";
+                query = "SELECT * FROM Item WHERE PublicationDate > ? ORDER BY PublicationDate DESC";
                 break;
             case ReadLater:
-                query = "SELECT * FROM Item WHERE IsReadLater = '1'";
+                query = "SELECT * FROM Item WHERE IsReadLater = '1' ORDER BY PublicationDate DESC";
                 break;
             case Favorites:
-                query = "SELECT  * FROM Item WHERE IsFavorite = '1'";
+                query = "SELECT  * FROM Item WHERE IsFavorite = '1' ORDER BY PublicationDate DESC";
                 break;
             case Channel:
-                query = "SELECT * FROM Item WHERE Category = ? AND ChannelName = ?";
+                query = "SELECT * FROM Item WHERE Category = ? AND ChannelName = ?  ORDER BY PublicationDate DESC";
         }
 
         try {
