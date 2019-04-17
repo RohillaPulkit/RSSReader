@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>groupId</groupId>
-    <artifactId>RSSReader</artifactId>
+    <groupId>RSSReader</groupId>
+    <artifactId>rssreader</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -17,6 +17,7 @@
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <moduleName>application</moduleName>
     </properties>
 
     <organization>
@@ -83,13 +84,53 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>java</goal>
+                            <goal>exec</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>rssreader.launcher.Main</mainClass>
+                    <longModulepath>false</longModulepath>
+                    <executable>${java.home}/bin/java</executable>
+                    <arguments>
+                        <argument>--module-path</argument>
+                        <argument>
+                            ${project.build.directory}/modules
+                        </argument>
+                        <argument>--module</argument>
+                        <argument>${moduleName}/${mainClass}</argument>
+                    </arguments>
+                    <successCodes>
+                        <successCode>0</successCode>
+                        <successCode>1</successCode>
+                    </successCodes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <outputDirectory>
+                        ${project.build.directory}/modules
+                    </outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
