@@ -8,17 +8,24 @@ import rssreader.model.RSSItem;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Date;
 
 public class DBManager {
 
+    private static boolean isTest = false;
+
+    public static void setIsTest(boolean isTest) {
+        DBManager.isTest = isTest;
+    }
+
     public static Connection connector(){
 
         try{
 
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:database//rssreader.sqlite");
+            String dbURL = isTest ? "jdbc:sqlite:database//tests.sqlite" : "jdbc:sqlite:database//rssreader.sqlite";
+
+            Connection connection = DriverManager.getConnection(dbURL);
             return connection;
         }
         catch (Exception ex){

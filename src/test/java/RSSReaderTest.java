@@ -18,6 +18,9 @@ public class RSSReaderTest{
 
     @Test
     public void getCategoriesTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try {
@@ -32,6 +35,9 @@ public class RSSReaderTest{
 
     @Test
     public void getSelectedCategoriesWithChannelTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try {
@@ -64,6 +70,9 @@ public class RSSReaderTest{
 
     @Test
     public void getParallelDownloadFlagTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try {
@@ -83,6 +92,9 @@ public class RSSReaderTest{
 
     @Test
     public void getClearItemsTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try {
@@ -101,6 +113,9 @@ public class RSSReaderTest{
 
     @Test
     public void RSSChannelDownloaderTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         RSSChannel channel = new RSSChannel(0, "", "");
@@ -120,6 +135,9 @@ public class RSSReaderTest{
 
     @Test
     public void RSSChannelSerialDownloaderTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try{
@@ -139,6 +157,9 @@ public class RSSReaderTest{
 
     @Test
     public void RSSChannelParallelDownloaderTest(){
+
+        DBManager.setIsTest(true);
+
         boolean thrown = false;
 
         try{

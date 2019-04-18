@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import rssreader.database.DBManager;
 import rssreader.model.RSSChannel;
 import rssreader.utility.DownloadManager;
 
@@ -12,6 +13,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        DBManager.setIsTest(false);
+
         Parent root = FXMLLoader.load(getClass().getResource("/layout/sidebar.fxml"));
         primaryStage.setTitle("RSS Reader");
 
